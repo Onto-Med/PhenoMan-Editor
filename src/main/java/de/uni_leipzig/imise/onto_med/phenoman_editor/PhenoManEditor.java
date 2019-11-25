@@ -1,15 +1,21 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor;
 
 import org.smith.phenoman.man.PhenotypeManager;
+import org.smith.phenoman.model.category_tree.EntityTreeNode;
+import org.smith.phenoman.model.phenotype.top_level.Entity;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.Objects;
 
 public class PhenoManEditor extends JFrame {
     private JTabbedPane tabbedPane;
@@ -22,9 +28,14 @@ public class PhenoManEditor extends JFrame {
     private JButton browseButton;
 	private JButton loadOntologyButton;
 	private JPanel editorPane;
-	private PhenotypeManager model;
+    private JButton reloadButton;
+    private PhenotypeForm phenotypeForm1;
+    private JLabel copImage;
+    private JLabel exampleImage;
+    private PhenotypeManager model;
 
     public PhenoManEditor() {
+        setIconImage(new ImageIcon(Objects.requireNonNull(PhenoManEditor.class.getClassLoader().getResource("images/favicon.png"))).getImage());
 		add(contentPane);
 		setTitle("PhenoMan-Editor");
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -49,7 +60,6 @@ public class PhenoManEditor extends JFrame {
 
             File file = fileChooser.getSelectedFile();
 			ontologyPath.setText(file.getAbsolutePath());
-			loadOntologyButton.setEnabled(true);
 		});
 
 		loadOntologyButton.addActionListener(actionEvent -> {
@@ -67,7 +77,20 @@ public class PhenoManEditor extends JFrame {
 				}
 			}
 		});
-	}
+        reloadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                EntityTreeNode node = model.getEntityTree(true);
+                tree.setModel(new DefaultTreeModel(convertToTreeNode(node)));
+            }
+        });
+    }
+
+    private MutableTreeNode convertToTreeNode(EntityTreeNode entityNode) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(entityNode.getEntity());
+        entityNode.getChildren().forEach(c -> node.add(convertToTreeNode(c)));
+        return node;
+    }
 
     public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -101,5 +124,11 @@ public class PhenoManEditor extends JFrame {
         if (definition.getText() != null ? !definition.getText().equals(data.getDefinition()) : data.getDefinition() != null)
             return true;
         return false;
+    }
+
+    private void createUIComponents() {
+        ClassLoader classLoader = PhenoManEditor.class.getClassLoader();
+        copImage = new JLabel(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/COP.png")).getPath()));
+        exampleImage = new JLabel(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/Example_BSA.png")).getPath()));
     }
 }
