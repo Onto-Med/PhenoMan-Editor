@@ -9,19 +9,19 @@ public class PhenotypeForm extends JPanel {
     private JPanel contentPane;
     private JButton saveButton;
 
-    public void setData(Phenotype data) {
+    public void setData(PhenotypeBean data) {
         textField1.setText(data.getId());
         textField2.setText(data.getLabel());
         textArea1.setText(data.getDefinition());
     }
 
-    public void getData(Phenotype data) {
+    public void getData(PhenotypeBean data) {
         data.setId(textField1.getText());
         data.setLabel(textField2.getText());
         data.setDefinition(textArea1.getText());
     }
 
-    public boolean isModified(Phenotype data) {
+    public boolean isModified(PhenotypeBean data) {
         if (textField1.getText() != null ? !textField1.getText().equals(data.getId()) : data.getId() != null)
             return true;
         if (textField2.getText() != null ? !textField2.getText().equals(data.getLabel()) : data.getLabel() != null)

@@ -2,20 +2,18 @@ package de.uni_leipzig.imise.onto_med.phenoman_editor;
 
 import org.smith.phenoman.man.PhenotypeManager;
 import org.smith.phenoman.model.category_tree.EntityTreeNode;
-import org.smith.phenoman.model.phenotype.top_level.Entity;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Objects;
+import java.util.concurrent.Callable;
 
 public class PhenoManEditor extends JFrame {
     private JTabbedPane tabbedPane;
@@ -66,8 +64,12 @@ public class PhenoManEditor extends JFrame {
 			String path = ontologyPath.getText();
 			if (!path.isBlank()) {
 				try {
-					model = new PhenotypeManager(path, false);
-					tabbedPane.setEnabledAt(2, true);
+				    doInBackground("Loading ontology...", () -> {
+                        model = new PhenotypeManager(path, false);
+                        tabbedPane.setEnabledAt(2, true);
+                        tabbedPane.setSelectedIndex(2);
+                        return null;
+                    });
 				} catch (Exception e) {
 					e.printStackTrace();
 					JOptionPane.showMessageDialog(
@@ -77,12 +79,9 @@ public class PhenoManEditor extends JFrame {
 				}
 			}
 		});
-        reloadButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                EntityTreeNode node = model.getEntityTree(true);
-                tree.setModel(new DefaultTreeModel(convertToTreeNode(node)));
-            }
+        reloadButton.addActionListener(actionEvent -> {
+            EntityTreeNode node = model.getEntityTree(true);
+            tree.setModel(new DefaultTreeModel(convertToTreeNode(node)));
         });
     }
 
@@ -104,19 +103,19 @@ public class PhenoManEditor extends JFrame {
         });
     }
 
-    public void setData(Phenotype data) {
+    public void setData(PhenotypeBean data) {
         id.setText(data.getId());
         label.setText(data.getLabel());
         definition.setText(data.getDefinition());
     }
 
-    public void getData(Phenotype data) {
+    public void getData(PhenotypeBean data) {
         data.setId(id.getText());
         data.setLabel(label.getText());
         data.setDefinition(definition.getText());
     }
 
-    public boolean isModified(Phenotype data) {
+    public boolean isModified(PhenotypeBean data) {
         if (id.getText() != null ? !id.getText().equals(data.getId()) : data.getId() != null)
             return true;
         if (label.getText() != null ? !label.getText().equals(data.getLabel()) : data.getLabel() != null)
@@ -124,6 +123,36 @@ public class PhenoManEditor extends JFrame {
         if (definition.getText() != null ? !definition.getText().equals(data.getDefinition()) : data.getDefinition() != null)
             return true;
         return false;
+    }
+
+    private <T> void doInBackground(String dialog, Callable<T> function) {
+        JFrame frame = new JFrame();
+        frame.setIconImage(new ImageIcon(Objects.requireNonNull(PhenoManEditor.class.getClassLoader().getResource("images/favicon.png"))).getImage());
+        final JDialog dlgProgress = new JDialog(frame, dialog, true);
+        JProgressBar  pbProgress  = new JProgressBar(0, 100);
+        pbProgress.setIndeterminate(true);
+
+        dlgProgress.getContentPane().add(BorderLayout.CENTER, pbProgress);
+        dlgProgress.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        dlgProgress.setSize(300, 60);
+        dlgProgress.setLocationRelativeTo(null);
+
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                function.call();
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                dlgProgress.dispose();
+            }
+        };
+
+        worker.execute();
+        dlgProgress.setVisible(true);
+        validate();
     }
 
     private void createUIComponents() {

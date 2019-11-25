@@ -1,11 +1,11 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor;
 
-public class Phenotype {
+public class PhenotypeBean {
 	private String id;
 	private String label;
 	private String definition;
 
-	public Phenotype() {
+	public PhenotypeBean() {
 	}
 
 	public String getId() {
