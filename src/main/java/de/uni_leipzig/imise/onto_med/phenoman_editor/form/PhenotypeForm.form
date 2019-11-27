@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="de.uni_leipzig.imise.onto_med.phenoman_editor.form.PhenotypeForm">
+  <grid id="27dc6" binding="contentPane" layout-manager="GridLayoutManager" row-count="12" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="453" height="436"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="a921b" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="ID:"/>
+        </properties>
+      </component>
+      <hspacer id="f9b03">
+        <constraints>
+          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </hspacer>
+      <component id="4fbaa" class="javax.swing.JTextField" binding="idField">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="5964e" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Main Title:"/>
+        </properties>
+      </component>
+      <component id="81867" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Descriptions:"/>
+        </properties>
+      </component>
+      <component id="ccaef" class="javax.swing.JButton" binding="saveButton" default-binding="true">
+        <constraints>
+          <grid row="10" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Save"/>
+        </properties>
+      </component>
+      <hspacer id="1931">
+        <constraints>
+          <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </hspacer>
+      <vspacer id="6ed6c">
+        <constraints>
+          <grid row="11" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </vspacer>
+      <component id="aaedf" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Titles:"/>
+        </properties>
+      </component>
+      <nested-form id="ba1f1" form-file="de/uni_leipzig/imise/onto_med/phenoman_editor/field/LocalizedStringField.form" binding="titlesField">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </nested-form>
+      <nested-form id="45734" form-file="de/uni_leipzig/imise/onto_med/phenoman_editor/field/LocalizedStringField.form" binding="descriptionsField">
+        <constraints>
+          <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </nested-form>
+      <component id="5ba20" class="javax.swing.JTextField" binding="mainTitleField">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="66aa6" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Synonyms:"/>
+        </properties>
+      </component>
+      <nested-form id="540d1" form-file="de/uni_leipzig/imise/onto_med/phenoman_editor/field/LocalizedStringField.form" binding="synonymsField">
+        <constraints>
+          <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </nested-form>
+      <component id="ea85d" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Relations:"/>
+        </properties>
+      </component>
+      <component id="2f6ed" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Codes:"/>
+        </properties>
+      </component>
+      <component id="fafea" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="UCUM:"/>
+        </properties>
+      </component>
+      <component id="8d0ba" class="javax.swing.JTextField" binding="ucumField">
+        <constraints>
+          <grid row="7" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="dae6f" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Categories:"/>
+        </properties>
+      </component>
+      <component id="91adf" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Super phenotype:"/>
+        </properties>
+      </component>
+      <component id="77c93" class="javax.swing.JLabel" binding="superPhenotypeField">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value=""/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
