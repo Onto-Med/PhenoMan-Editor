@@ -11,11 +11,12 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.Enumeration;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
@@ -31,6 +32,7 @@ public class PhenoManEditor extends JFrame implements ChangeListener {
     private JLabel copImage;
     private JLabel exampleImage;
     private PhenotypeTree tree;
+    private JTextField treeSearchField;
     private PhenotypeManager model;
 
     public PhenoManEditor() {
@@ -71,8 +73,30 @@ public class PhenoManEditor extends JFrame implements ChangeListener {
 			}
 		});
         reloadButton.addActionListener(actionEvent -> {
+            if (model == null) return;
             EntityTreeNode node = model.getEntityTree(true);
             tree.setModel(new DefaultTreeModel(convertToTreeNode(node)));
+        });
+        treeSearchField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() != KeyEvent.VK_ENTER) return;
+                if (treeSearchField.getText().isBlank()) return;
+
+                Object root = tree.getModel().getRoot();
+                if (root == null) return;
+
+                Enumeration<TreeNode> enumeration = ((DefaultMutableTreeNode) root).depthFirstEnumeration();
+                while (enumeration.hasMoreElements()) {
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) enumeration.nextElement();
+                    if (node.toString().toLowerCase().contains(treeSearchField.getText().toLowerCase())) {
+                        TreePath path = new TreePath(node.getPath());
+                        tree.setSelectionPath(path);
+                        tree.scrollPathToVisible(path);
+                        break;
+                    }
+                }
+            }
         });
     }
 
@@ -130,6 +154,8 @@ public class PhenoManEditor extends JFrame implements ChangeListener {
         copImage = new JLabel(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/COP.png")).getPath()));
         exampleImage = new JLabel(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/Example_BSA.png")).getPath()));
         tree = new PhenotypeTree(this);
+        tree.setModel(new DefaultTreeModel(null));
+        tree.setShowsRootHandles(true);
     }
 
     @Override

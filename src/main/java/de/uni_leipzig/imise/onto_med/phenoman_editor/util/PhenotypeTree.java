@@ -17,6 +17,7 @@ public class PhenotypeTree extends JTree implements ActionListener {
     ChangeListener listener;
 
     public PhenotypeTree(ChangeListener listener) {
+        super();
         this.listener = listener;
         setCellRenderer(new PhenotypeTreeCellRenderer());
         JPopupMenu popup = new PhenotypeTreePopup(this);
