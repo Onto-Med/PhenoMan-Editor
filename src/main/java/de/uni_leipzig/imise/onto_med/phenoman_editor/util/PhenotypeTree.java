@@ -18,6 +18,7 @@ public class PhenotypeTree extends JTree implements ActionListener {
 
     public PhenotypeTree(ChangeListener listener) {
         this.listener = listener;
+        setCellRenderer(new PhenotypeTreeCellRenderer());
         JPopupMenu popup = new PhenotypeTreePopup(this);
 
         addMouseListener(new MouseAdapter() {
@@ -35,6 +36,8 @@ public class PhenotypeTree extends JTree implements ActionListener {
 
         TreePath path = this.getSelectionPath();
         node = (DefaultMutableTreeNode) path.getLastPathComponent();
+
+        if (node == null || node.getUserObject() == null || !(node.getUserObject() instanceof Entity)) return;
 
         if (ae.getActionCommand().equals("inspect")) {
             listener.stateChanged(new ChangeEvent(node));
