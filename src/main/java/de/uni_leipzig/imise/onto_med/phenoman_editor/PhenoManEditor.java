@@ -40,7 +40,7 @@ public class PhenoManEditor extends JFrame implements ChangeListener {
 		add(contentPane);
 		setTitle("PhenoMan-Editor");
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setSize(700, 600);
+		setSize(1000, 700);
 		setLocationRelativeTo(null);
 //		tabbedPane.setEnabledAt(2, false);
 

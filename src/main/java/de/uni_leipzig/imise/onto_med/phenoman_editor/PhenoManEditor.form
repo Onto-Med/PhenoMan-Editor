@@ -224,11 +224,18 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <nested-form id="525d5" form-file="de/uni_leipzig/imise/onto_med/phenoman_editor/form/PhenotypeForm.form" binding="phenotypeForm" default-binding="true">
+                      <scrollpane id="6b66b">
                         <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                      </nested-form>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <nested-form id="525d5" form-file="de/uni_leipzig/imise/onto_med/phenoman_editor/form/PhenotypeForm.form" binding="phenotypeForm" default-binding="true">
+                            <constraints/>
+                          </nested-form>
+                        </children>
+                      </scrollpane>
                     </children>
                   </grid>
                 </children>

@@ -18,7 +18,7 @@ public class LocalizedStringField extends JPanel {
 
     public LocalizedStringField() {
         addRowButton.addActionListener(actionEvent -> {
-            model.addRow(new LocalizedString(null, Locale.ENGLISH));
+            model.addRow(new LocalizedString());
         });
     }
 

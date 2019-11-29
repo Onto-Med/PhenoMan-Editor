@@ -6,6 +6,11 @@ public class LocalizedString {
     private String string;
     private Locale language;
 
+    public LocalizedString() {
+        string = null;
+        language = null;
+    }
+
     public LocalizedString(String string, Locale language) {
         this.string = string;
         this.language = language;

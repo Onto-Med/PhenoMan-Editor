@@ -1,6 +1,5 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor.util;
 
-import de.uni_leipzig.imise.onto_med.phenoman_editor.form.PhenotypeForm;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 

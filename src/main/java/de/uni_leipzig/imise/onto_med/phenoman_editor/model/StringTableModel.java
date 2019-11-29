@@ -7,21 +7,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class LocalizedStringTableModel extends AbstractTableModel {
-    private List<LocalizedString> rows = new ArrayList<>();
+public class StringTableModel extends AbstractTableModel {
+    private List<String> rows = new ArrayList<>();
 
-    public LocalizedStringTableModel() {}
+    public StringTableModel() {}
 
-    public LocalizedStringTableModel(List<LocalizedString> rows) {
+    public StringTableModel(List<String> rows) {
         setRows(rows);
     }
 
-    public void setRows(List<LocalizedString> rows) {
+    public void setRows(List<String> rows) {
         this.rows = rows;
         fireTableDataChanged();
     }
 
-    public List<LocalizedString> getRows() {
+    public List<String> getRows() {
         return rows;
     }
 
@@ -32,23 +32,16 @@ public class LocalizedStringTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 2;
+        return 1;
     }
 
     @Override
     public Object getValueAt(int row, int col) {
-        if (col == 0) {
-            return rows.get(row).getLocale();
-        } else if (col == 1) {
-            return rows.get(row).getString();
-        }
-        return null;
+        return (col == 0) ? rows.get(row) : null;
     }
 
     public String getColumnName(int column) {
-        if (column == 0) return "Language";
-        if (column == 1) return "String";
-        return null;
+        return (column == 0) ? "String" : null;
     }
 
     public boolean isCellEditable(int row, int col) {
@@ -57,14 +50,12 @@ public class LocalizedStringTableModel extends AbstractTableModel {
 
     public void setValueAt(Object value, int row, int col) {
         if (col == 0) {
-            rows.get(row).setLocale((Locale) value);
-        } else if (col == 1) {
-            rows.get(row).setString((String) value);
+            rows.set(row, (String) value);
         }
         fireTableCellUpdated(row, col);
     }
 
-    public void addRow(LocalizedString row) {
+    public void addRow(String row) {
         rows.add(row);
         int index = getRowCount() - 1;
         fireTableRowsInserted(index, index);
