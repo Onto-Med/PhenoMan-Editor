@@ -4,7 +4,9 @@ import de.uni_leipzig.imise.onto_med.phenoman_editor.bean.PhenotypeBean;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.field.LocalizedStringField;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.field.StringField;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.model.OWL2DatatypeComboBoxModel;
+import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
+import org.smith.phenoman.exception.WrongPhenotypeTypeException;
 import org.smith.phenoman.man.PhenotypeManager;
 import org.smith.phenoman.model.phenotype.top_level.Entity;
 
@@ -34,14 +36,28 @@ public class PhenotypeForm extends JPanel {
     private JLabel superCategoriesField;
     private JComboBox datatypeField;
     private JComboBox formulaDatatypeField;
+    private JTextArea restrictionField;
 
     public PhenotypeForm() {
         scoreField.setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(new DecimalFormat("###0.00"))));
         saveButton.addActionListener(actionEvent -> {
-            PhenotypeBean phenotype = new PhenotypeBean();
-            getData(phenotype);
-            System.out.println(phenotype);
+            if (model == null) return;
+            PhenotypeBean phenotype = getData(new PhenotypeBean());
+            phenotype.setType(EntityType.ABSTRACT_PHENOTYPE);
+
+            try {
+                phenotype.addToModel(model);
+            } catch (IllegalArgumentException | WrongPhenotypeTypeException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(
+                        new JFrame(), String.format("Could not save phenotype!\nReason: %s", e.getLocalizedMessage())
+                );
+            }
         });
+    }
+
+    public void setModel(PhenotypeManager model) {
+        this.model = model;
     }
 
     public void setData(PhenotypeBean data) {
@@ -60,6 +76,7 @@ public class PhenotypeForm extends JPanel {
         formulaDatatypeField.getModel().setSelectedItem(data.getFormulaDatatype());
         formulaField.setText(data.getFormula());
         scoreField.setValue(data.getScore());
+        if (data.getRestriction() != null) restrictionField.setText(data.getRestriction().toString());
 
         if (data.getSuperPhenotype() != null)
             superPhenotypeField.setText(data.getSuperPhenotype().getMainTitleText());
@@ -67,7 +84,7 @@ public class PhenotypeForm extends JPanel {
             superCategoriesField.setText(data.getSuperCategories().stream().map(Entity::getMainTitleText).collect(Collectors.joining(", ")));
     }
 
-    public void getData(PhenotypeBean data) {
+    public PhenotypeBean getData(PhenotypeBean data) {
         data.setId(idField.getText());
         data.setMainTitle(mainTitleField.getText());
         data.setTitles(titlesField.getData());
@@ -79,7 +96,9 @@ public class PhenotypeForm extends JPanel {
         data.setUcum(ucumField.getText());
         data.setFormulaDatatype((OWL2Datatype) formulaDatatypeField.getSelectedItem());
         data.setFormula(formulaField.getText());
-        data.setScore((BigDecimal) scoreField.getValue());
+        if (scoreField.getValue() != null) data.setScore(new BigDecimal(scoreField.getText().replace(",", ".")));
+        // TODO: restriction
+        return data;
     }
 
     public boolean isModified(PhenotypeBean data) {
@@ -107,6 +126,7 @@ public class PhenotypeForm extends JPanel {
             return true;
         if (formulaField.getText() != null ? !formulaField.getText().equals(data.getFormula()) : data.getFormula() != null)
             return true;
+        // TODO: restriction
         return false;
     }
 

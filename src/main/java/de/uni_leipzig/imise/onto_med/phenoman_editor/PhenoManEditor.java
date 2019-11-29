@@ -2,6 +2,7 @@ package de.uni_leipzig.imise.onto_med.phenoman_editor;
 
 import de.uni_leipzig.imise.onto_med.phenoman_editor.bean.PhenotypeBean;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.form.PhenotypeForm;
+import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeTree;
 import org.smith.phenoman.man.PhenotypeManager;
 import org.smith.phenoman.model.category_tree.EntityTreeNode;
@@ -42,7 +43,7 @@ public class PhenoManEditor extends JFrame implements ChangeListener {
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setSize(1000, 700);
 		setLocationRelativeTo(null);
-//		tabbedPane.setEnabledAt(2, false);
+		tabbedPane.setEnabledAt(2, false);
 
         browseButton.addActionListener(actionEvent -> {
             JFileChooser fileChooser = new JFileChooser();
@@ -59,6 +60,7 @@ public class PhenoManEditor extends JFrame implements ChangeListener {
 				try {
 				    doInBackground("Loading ontology...", () -> {
                         model = new PhenotypeManager(path, false);
+                        phenotypeForm.setModel(model);
                         tabbedPane.setEnabledAt(2, true);
                         tabbedPane.setSelectedIndex(2);
                         return null;
@@ -160,6 +162,8 @@ public class PhenoManEditor extends JFrame implements ChangeListener {
 
     @Override
     public void stateChanged(ChangeEvent changeEvent) {
-        phenotypeForm.setData(new PhenotypeBean((Entity) ((DefaultMutableTreeNode) changeEvent.getSource()).getUserObject()));
+        PhenotypeBean phenotype = new PhenotypeBean((Entity) ((DefaultMutableTreeNode) changeEvent.getSource()).getUserObject());
+        phenotype.setType(EntityType.ABSTRACT_PHENOTYPE);
+        phenotypeForm.setData(phenotype);
     }
 }

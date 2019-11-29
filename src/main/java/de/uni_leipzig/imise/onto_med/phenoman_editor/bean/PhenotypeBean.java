@@ -1,10 +1,13 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor.bean;
 
 import de.imise.onto_api.entities.restrictions.data_range.DataRange;
+import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.LocalizedString;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
+import org.smith.phenoman.exception.WrongPhenotypeTypeException;
 import org.smith.phenoman.man.PhenotypeManager;
 import org.smith.phenoman.model.code_system.Code;
+import org.smith.phenoman.model.phenotype.*;
 import org.smith.phenoman.model.phenotype.top_level.*;
 
 import java.math.BigDecimal;
@@ -13,6 +16,8 @@ import java.util.stream.Collectors;
 
 public class PhenotypeBean {
 	private PhenotypeManager model;
+
+	private EntityType type;
 
 	private String id;
 	private String mainTitle;
@@ -32,8 +37,7 @@ public class PhenotypeBean {
 	private OWL2Datatype formulaDatatype;
 	private String formula;
 
-	private List<DataRange> range = new ArrayList<>();
-	private List<String> enumeration = new ArrayList<>();
+	private DataRange restriction;
 
 	private String ucum;
 	private BigDecimal score;
@@ -67,10 +71,41 @@ public class PhenotypeBean {
 		if (!entity.isCategory() && !entity.isAbstractPhenotype()) { // is restricted phenotype
 			score = ((RestrictedPhenotype) entity).getScore();
 			// superPhenotype = model.getSuperPhenotype(entity);
+            if (entity.isRangePhenotype())
+                restriction = entity.asRangePhenotype().getPhenotypeRange();
 		}
 	}
 
-	public String getId() {
+	public void addToModel(PhenotypeManager model) throws WrongPhenotypeTypeException, IllegalArgumentException {
+        if (type.equals(EntityType.ABSTRACT_PHENOTYPE)) {
+            AbstractSinglePhenotype phenotype;
+            switch (datatype) {
+				case XSD_DECIMAL: phenotype = new AbstractSingleDecimalPhenotype(id, mainTitle); break;
+                case XSD_STRING: phenotype = new AbstractSingleStringPhenotype(id, mainTitle); break;
+                case XSD_DATE_TIME: phenotype = new AbstractSingleDatePhenotype(id, mainTitle); break;
+                default: throw new IllegalArgumentException(datatype.getShortForm() + " is not supported");
+            }
+
+            descriptions.forEach(d -> phenotype.addDescription(d.getString(), d.getLocale().toLanguageTag()));
+            titles.forEach(t -> phenotype.addTitle(new Title(t.getString(), t.getLocale().toLanguageTag())));
+            synonyms.forEach(s -> phenotype.addLabel(s.getString(), s.getLocale().toLanguageTag()));
+            relations.forEach(phenotype::addRelatedConcept);
+            codes.forEach(c -> phenotype.addCode(new Code(c)));
+            phenotype.setUnit(ucum);
+
+            model.addAbstractSinglePhenotype(phenotype);
+        }
+    }
+
+    public EntityType getType() {
+        return type;
+    }
+
+    public void setType(EntityType type) {
+        this.type = type;
+    }
+
+    public String getId() {
 		return id;
 	}
 
@@ -182,7 +217,15 @@ public class PhenotypeBean {
 		this.score = score;
 	}
 
-	private List<LocalizedString> stringMapToLocalizedStringList(Map<String, Set<String>> map) {
+    public DataRange getRestriction() {
+        return restriction;
+    }
+
+    public void setRestriction(DataRange restriction) {
+        this.restriction = restriction;
+    }
+
+    private List<LocalizedString> stringMapToLocalizedStringList(Map<String, Set<String>> map) {
 		List<LocalizedString> stringList = new ArrayList<>();
 		map.forEach((lang, list) ->
 				list.forEach(text -> stringList.add(new LocalizedString(text, Locale.forLanguageTag(lang))))
