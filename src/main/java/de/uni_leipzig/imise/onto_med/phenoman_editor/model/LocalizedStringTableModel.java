@@ -57,7 +57,7 @@ public class LocalizedStringTableModel extends AbstractTableModel {
 
     public void setValueAt(Object value, int row, int col) {
         if ((col == 0 || col == 1) && rows.size() <= row)
-            rows.add(row, new LocalizedString());
+            rows.set(row, new LocalizedString());
 
         if (col == 0) {
             rows.get(row).setLocale((Locale) value);
@@ -71,5 +71,12 @@ public class LocalizedStringTableModel extends AbstractTableModel {
         rows.add(row);
         int index = getRowCount() - 1;
         fireTableRowsInserted(index, index);
+    }
+
+    public void removeRow(int row) {
+        if (rows.size() <= row) return;
+
+        rows.remove(row);
+        fireTableRowsDeleted(row, row);
     }
 }

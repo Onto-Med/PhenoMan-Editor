@@ -5,6 +5,9 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,11 +17,20 @@ public class StringField extends JPanel {
     private JTable table;
     private StringTableModel model;
     private JButton addRowButton;
+    private JButton deleteRowButton;
 
     public StringField() {
         IconFontSwing.register(FontAwesome.getIconFont());
         addRowButton.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 12));
         addRowButton.addActionListener(actionEvent -> model.addRow(null));
+        deleteRowButton.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH_O, 12));
+        deleteRowButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (table.getSelectedRow() != -1)
+                    model.removeRow(table.getSelectedRow());
+            }
+        });
     }
 
     public void setData(List<String> data) {

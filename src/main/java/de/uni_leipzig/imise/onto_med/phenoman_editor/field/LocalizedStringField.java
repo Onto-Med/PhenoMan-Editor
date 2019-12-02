@@ -17,11 +17,20 @@ public class LocalizedStringField extends JPanel {
     private JTable table;
     private LocalizedStringTableModel model;
     private JButton addRowButton;
+    private JButton deleteRowButton;
 
     public LocalizedStringField() {
         IconFontSwing.register(FontAwesome.getIconFont());
         addRowButton.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 12));
         addRowButton.addActionListener(actionEvent -> model.addRow(new LocalizedString()));
+        deleteRowButton.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH_O, 12));
+        deleteRowButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (table.getSelectedRow() == -1) return;
+                model.removeRow(table.getSelectedRow());
+            }
+        });
     }
 
     public void setData(List<LocalizedString> data) {

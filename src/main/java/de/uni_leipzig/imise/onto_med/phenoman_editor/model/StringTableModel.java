@@ -60,4 +60,11 @@ public class StringTableModel extends AbstractTableModel {
         int index = getRowCount() - 1;
         fireTableRowsInserted(index, index);
     }
+
+    public void removeRow(int row) {
+        if (rows.size() <= row) return;
+
+        rows.remove(row);
+        fireTableRowsDeleted(row, row);
+    }
 }
