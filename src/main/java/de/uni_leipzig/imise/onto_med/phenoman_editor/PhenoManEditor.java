@@ -4,6 +4,8 @@ import de.uni_leipzig.imise.onto_med.phenoman_editor.bean.PhenotypeBean;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.form.PhenotypeForm;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeTree;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import org.smith.phenoman.man.PhenotypeManager;
 import org.smith.phenoman.model.category_tree.EntityTreeNode;
 import org.smith.phenoman.model.phenotype.top_level.Entity;
@@ -34,16 +36,26 @@ public class PhenoManEditor extends JFrame implements ChangeListener {
     private JLabel exampleImage;
     private PhenotypeTree tree;
     private JTextField treeSearchField;
+    private JScrollPane phenotypeFormScrollPane;
+    private JScrollPane introductionScrollPane;
     private PhenotypeManager model;
 
     public PhenoManEditor() {
+        IconFontSwing.register(FontAwesome.getIconFont());
         setIconImage(new ImageIcon(Objects.requireNonNull(PhenoManEditor.class.getClassLoader().getResource("images/favicon.png"))).getImage());
 		add(contentPane);
 		setTitle("PhenoMan-Editor");
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setSize(1000, 700);
 		setLocationRelativeTo(null);
+        tabbedPane.setIconAt(0, IconFontSwing.buildIcon(FontAwesome.INFO, 12));
+        tabbedPane.setIconAt(1, IconFontSwing.buildIcon(FontAwesome.SITEMAP, 12));
+        tabbedPane.setIconAt(2, IconFontSwing.buildIcon(FontAwesome.PENCIL_SQUARE_O, 12));
+        tabbedPane.setIconAt(3, IconFontSwing.buildIcon(FontAwesome.COGS, 12));
 		tabbedPane.setEnabledAt(2, false);
+        phenotypeForm.setVisible(false);
+        phenotypeFormScrollPane.getVerticalScrollBar().setUnitIncrement(10);
+        introductionScrollPane.getVerticalScrollBar().setUnitIncrement(10);
 
         browseButton.addActionListener(actionEvent -> {
             JFileChooser fileChooser = new JFileChooser();
@@ -74,6 +86,7 @@ public class PhenoManEditor extends JFrame implements ChangeListener {
 				}
 			}
 		});
+		reloadButton.setIcon(IconFontSwing.buildIcon(FontAwesome.REFRESH, 12));
         reloadButton.addActionListener(actionEvent -> {
             if (model == null) return;
             EntityTreeNode node = model.getEntityTree(true);
@@ -163,7 +176,7 @@ public class PhenoManEditor extends JFrame implements ChangeListener {
     @Override
     public void stateChanged(ChangeEvent changeEvent) {
         PhenotypeBean phenotype = new PhenotypeBean((Entity) ((DefaultMutableTreeNode) changeEvent.getSource()).getUserObject());
-        phenotype.setType(EntityType.ABSTRACT_PHENOTYPE);
         phenotypeForm.setData(phenotype);
+        phenotypeForm.setVisible(true);
     }
 }

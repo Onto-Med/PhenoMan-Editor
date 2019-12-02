@@ -34,16 +34,25 @@ public class PhenotypeTree extends JTree implements ActionListener {
 
     public void actionPerformed(ActionEvent ae) {
         DefaultMutableTreeNode node;
-
         TreePath path = this.getSelectionPath();
-        node = (DefaultMutableTreeNode) path.getLastPathComponent();
+        if (path == null) return;
 
+        node = (DefaultMutableTreeNode) path.getLastPathComponent();
         if (node == null || node.getUserObject() == null || !(node.getUserObject() instanceof Entity)) return;
 
-        if (ae.getActionCommand().equals("inspect")) {
-            listener.stateChanged(new ChangeEvent(node));
-        } else if (ae.getActionCommand().equals("add_category")) {
-            System.out.println("add_category triggered");
+        switch (ae.getActionCommand()) {
+            case "inspect":
+                listener.stateChanged(new ChangeEvent(node));
+                break;
+            case "add_category":
+                System.out.println("add_category triggered");
+                break;
+            case "add_abstract_phenotype":
+                System.out.println("add_abstract_phenotype triggered");
+                break;
+            case "add_restricted_phenotype":
+                System.out.println("add_restricted_phenotype triggered");
+                break;
         }
     }
 }

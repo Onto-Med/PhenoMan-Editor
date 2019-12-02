@@ -3,6 +3,8 @@ package de.uni_leipzig.imise.onto_med.phenoman_editor.field;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.model.LocaleComboBoxModel;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.model.LocalizedStringTableModel;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.LocalizedString;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
@@ -17,9 +19,9 @@ public class LocalizedStringField extends JPanel {
     private JButton addRowButton;
 
     public LocalizedStringField() {
-        addRowButton.addActionListener(actionEvent -> {
-            model.addRow(new LocalizedString());
-        });
+        IconFontSwing.register(FontAwesome.getIconFont());
+        addRowButton.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 12));
+        addRowButton.addActionListener(actionEvent -> model.addRow(new LocalizedString()));
     }
 
     public void setData(List<LocalizedString> data) {
@@ -34,8 +36,8 @@ public class LocalizedStringField extends JPanel {
         return model.getRows() != null ? !model.getRows().equals(data) : data != null;
     }
 
-    public JPanel getContentPane() {
-        return contentPane;
+    public void setVisible(boolean visible) {
+        contentPane.setVisible(visible);
     }
 
     private void createUIComponents() {

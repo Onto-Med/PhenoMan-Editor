@@ -4,6 +4,8 @@ import de.imise.onto_api.entities.restrictions.data_range.DataRange;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.LocalizedString;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.smith.phenoman.exception.WrongPhenotypeTypeException;
 import org.smith.phenoman.man.PhenotypeManager;
 import org.smith.phenoman.model.code_system.Code;
@@ -12,6 +14,7 @@ import org.smith.phenoman.model.phenotype.top_level.*;
 
 import java.math.BigDecimal;
 import java.util.*;
+
 import java.util.stream.Collectors;
 
 public class PhenotypeBean {
@@ -22,7 +25,7 @@ public class PhenotypeBean {
 	private String id;
 	private String mainTitle;
 
-	private List<Category> superCategories;
+	private List<String> superCategories = new ArrayList<>();
 	private Phenotype superPhenotype;
 
 	/*** localized: ***/
@@ -34,7 +37,6 @@ public class PhenotypeBean {
 	private List<String> codes = new ArrayList<>();
 	private OWL2Datatype datatype;
 
-	private OWL2Datatype formulaDatatype;
 	private String formula;
 
 	private DataRange restriction;
@@ -47,6 +49,13 @@ public class PhenotypeBean {
 
 	public PhenotypeBean(Entity entity) {
 		this();
+		if (entity.isCategory()) {
+			type = EntityType.CATEGORY;
+		} else if (entity.isAbstractPhenotype()) {
+			type = EntityType.ABSTRACT_PHENOTYPE;
+		} else {
+			type = EntityType.RESTRICTED_PHENOTYPE;
+		}
 		id        = entity.getName();
 		mainTitle = entity.getMainTitleText();
 
@@ -60,7 +69,7 @@ public class PhenotypeBean {
 		if (entity.isAbstractSinglePhenotype()) datatype = entity.asAbstractSinglePhenotype().getDatatype();
 
 		if (entity.isAbstractCalculationPhenotype()) { // is abstract calculation phenotype
-			formulaDatatype = entity.asAbstractCalculationPhenotype().getDatatype();
+			datatype = entity.asAbstractCalculationPhenotype().getDatatype();
 			formula = entity.asAbstractCalculationPhenotype().getFormula();
 		}
 
@@ -77,7 +86,19 @@ public class PhenotypeBean {
 	}
 
 	public void addToModel(PhenotypeManager model) throws WrongPhenotypeTypeException, IllegalArgumentException {
-        if (type.equals(EntityType.ABSTRACT_PHENOTYPE)) {
+        if (type.equals(EntityType.CATEGORY)) {
+			System.out.println("writing category to model");
+        	Category category = new Category(id, mainTitle);
+
+        	category.setSuperCategories(superCategories.toArray(String[]::new));
+			descriptions.forEach(d -> category.addDescription(d.getString(), d.getLocale().toLanguageTag()));
+			titles.forEach(t -> category.addTitle(new Title(t.getString(), t.getLocale().toLanguageTag())));
+			synonyms.forEach(s -> category.addLabel(s.getString(), s.getLocale().toLanguageTag()));
+			relations.forEach(category::addRelatedConcept);
+
+			model.addCategory(category);
+		} else if (type.equals(EntityType.ABSTRACT_PHENOTYPE)) {
+			System.out.println("writing abstract phenotype to model");
             AbstractSinglePhenotype phenotype;
             switch (datatype) {
 				case XSD_DECIMAL: phenotype = new AbstractSingleDecimalPhenotype(id, mainTitle); break;
@@ -86,6 +107,7 @@ public class PhenotypeBean {
                 default: throw new IllegalArgumentException(datatype.getShortForm() + " is not supported");
             }
 
+            phenotype.setCategories(superCategories.toArray(String[]::new));
             descriptions.forEach(d -> phenotype.addDescription(d.getString(), d.getLocale().toLanguageTag()));
             titles.forEach(t -> phenotype.addTitle(new Title(t.getString(), t.getLocale().toLanguageTag())));
             synonyms.forEach(s -> phenotype.addLabel(s.getString(), s.getLocale().toLanguageTag()));
@@ -94,7 +116,10 @@ public class PhenotypeBean {
             phenotype.setUnit(ucum);
 
             model.addAbstractSinglePhenotype(phenotype);
-        }
+        } else if (type.equals(EntityType.RESTRICTED_PHENOTYPE)) {
+			System.out.println("writing restricted phenotype to model");
+		}
+        model.write();
     }
 
     public EntityType getType() {
@@ -185,20 +210,12 @@ public class PhenotypeBean {
 		this.superPhenotype = superPhenotype;
 	}
 
-	public List<Category> getSuperCategories() {
+	public List<String> getSuperCategories() {
 		return superCategories;
 	}
 
-	public void setSuperCategories(List<Category> superCategories) {
+	public void setSuperCategories(List<String> superCategories) {
 		this.superCategories = superCategories;
-	}
-
-	public OWL2Datatype getFormulaDatatype() {
-		return formulaDatatype;
-	}
-
-	public void setFormulaDatatype(OWL2Datatype formulaDatatype) {
-		this.formulaDatatype = formulaDatatype;
 	}
 
 	public String getFormula() {

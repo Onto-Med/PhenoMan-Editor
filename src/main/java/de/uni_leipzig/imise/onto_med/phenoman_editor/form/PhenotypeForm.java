@@ -5,9 +5,14 @@ import de.uni_leipzig.imise.onto_med.phenoman_editor.field.LocalizedStringField;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.field.StringField;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.model.OWL2DatatypeComboBoxModel;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.smith.phenoman.exception.WrongPhenotypeTypeException;
 import org.smith.phenoman.man.PhenotypeManager;
+import org.smith.phenoman.model.phenotype.AbstractCalculationDecimalPhenotype;
+import org.smith.phenoman.model.phenotype.AbstractCalculationPhenotype;
+import org.smith.phenoman.model.phenotype.RestrictedCalculationPhenotype;
 import org.smith.phenoman.model.phenotype.top_level.Entity;
 
 import javax.swing.*;
@@ -15,6 +20,7 @@ import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class PhenotypeForm extends JPanel {
@@ -33,21 +39,29 @@ public class PhenotypeForm extends JPanel {
     private JFormattedTextField scoreField;
     private StringField relationsField;
     private StringField codesField;
-    private JLabel superCategoriesField;
-    private JComboBox datatypeField;
-    private JComboBox formulaDatatypeField;
+    private JTextField superCategoriesField;
+    private JComboBox<OWL2Datatype> datatypeField;
     private JTextArea restrictionField;
+    private JLabel restrictionLabel;
+    private JLabel scoreLabel;
+    private JLabel ucumLabel;
+    private JLabel formulaLabel;
+    private JLabel datatypeLabel;
+    private JLabel superPhenotypeLabel;
+    private JLabel superCategoriesLabel;
+    private JLabel codesLabel;
+    private EntityType type;
 
     public PhenotypeForm() {
         scoreField.setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(new DecimalFormat("###0.00"))));
+        IconFontSwing.register(FontAwesome.getIconFont());
+        saveButton.setIcon(IconFontSwing.buildIcon(FontAwesome.FLOPPY_O, 12));
         saveButton.addActionListener(actionEvent -> {
             if (model == null) return;
-            PhenotypeBean phenotype = getData(new PhenotypeBean());
-            phenotype.setType(EntityType.ABSTRACT_PHENOTYPE);
 
             try {
-                phenotype.addToModel(model);
-            } catch (IllegalArgumentException | WrongPhenotypeTypeException e) {
+                getData(new PhenotypeBean()).addToModel(model);
+            } catch (Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(
                         new JFrame(), String.format("Could not save phenotype!\nReason: %s", e.getLocalizedMessage())
@@ -61,6 +75,7 @@ public class PhenotypeForm extends JPanel {
     }
 
     public void setData(PhenotypeBean data) {
+        type = data.getType();
         idField.setText(data.getId());
         mainTitleField.setText(data.getMainTitle());
         titlesField.setData(data.getTitles());
@@ -68,25 +83,33 @@ public class PhenotypeForm extends JPanel {
         descriptionsField.setData(data.getDescriptions());
         relationsField.setData(data.getRelations());
 
-        codesField.setData(data.getCodes());
-        datatypeField.getModel().setSelectedItem(data.getDatatype());
-
-        ucumField.setText(data.getUcum());
-
-        formulaDatatypeField.getModel().setSelectedItem(data.getFormulaDatatype());
-        formulaField.setText(data.getFormula());
-        scoreField.setValue(data.getScore());
-        if (data.getRestriction() != null) restrictionField.setText(data.getRestriction().toString());
-
-        if (data.getSuperPhenotype() != null)
-            superPhenotypeField.setText(data.getSuperPhenotype().getMainTitleText());
         if (data.getSuperCategories() != null)
-            superCategoriesField.setText(data.getSuperCategories().stream().map(Entity::getMainTitleText).collect(Collectors.joining(", ")));
+            superCategoriesField.setText(String.join("; ", data.getSuperCategories()));
+
+        switch (type) {
+            case ABSTRACT_PHENOTYPE:
+                datatypeField.getModel().setSelectedItem(data.getDatatype());
+                ucumField.setText(data.getUcum());
+                formulaField.setText(data.getFormula());
+                codesField.setData(data.getCodes());
+                break;
+            case RESTRICTED_PHENOTYPE:
+                scoreField.setValue(data.getScore());
+                codesField.setData(data.getCodes());
+                if (data.getSuperPhenotype() != null)
+                    superPhenotypeField.setText(data.getSuperPhenotype().getMainTitleText());
+                if (data.getRestriction() != null)
+                    restrictionField.setText(data.getRestriction().toString());
+                break;
+        }
+        toggleFields();
     }
 
     public PhenotypeBean getData(PhenotypeBean data) {
+        data.setType(type);
         data.setId(idField.getText());
         data.setMainTitle(mainTitleField.getText());
+        data.setSuperCategories(Arrays.asList(superCategoriesField.getText().split(";")));
         data.setTitles(titlesField.getData());
         data.setSynonyms(synonymsField.getData());
         data.setDescriptions(descriptionsField.getData());
@@ -94,7 +117,6 @@ public class PhenotypeForm extends JPanel {
         data.setCodes(codesField.getData());
         data.setDatatype((OWL2Datatype) datatypeField.getSelectedItem());
         data.setUcum(ucumField.getText());
-        data.setFormulaDatatype((OWL2Datatype) formulaDatatypeField.getSelectedItem());
         data.setFormula(formulaField.getText());
         if (scoreField.getValue() != null) data.setScore(new BigDecimal(scoreField.getText().replace(",", ".")));
         // TODO: restriction
@@ -118,8 +140,6 @@ public class PhenotypeForm extends JPanel {
             return true;
         if (datatypeField.getSelectedItem() != null ? !datatypeField.getSelectedItem().equals(data.getDatatype()) : data.getDatatype() != null)
             return true;
-        if (formulaDatatypeField.getSelectedItem() != null ? !formulaDatatypeField.getSelectedItem().equals(data.getFormulaDatatype()) : data.getFormulaDatatype() != null)
-            return true;
         if (ucumField.getText() != null ? !ucumField.getText().equals(data.getUcum()) : data.getUcum() != null)
             return true;
         if (scoreField.getValue() != null ? !scoreField.getValue().equals(data.getScore()) : data.getScore() != null)
@@ -130,8 +150,30 @@ public class PhenotypeForm extends JPanel {
         return false;
     }
 
+    public void setVisible(boolean visible) {
+        contentPane.setVisible(visible);
+    }
+
+    private void toggleFields() {
+        restrictionLabel.setVisible(type.equals(EntityType.RESTRICTED_PHENOTYPE));
+        restrictionField.setVisible(type.equals(EntityType.RESTRICTED_PHENOTYPE));
+        superPhenotypeLabel.setVisible(type.equals(EntityType.RESTRICTED_PHENOTYPE));
+        superPhenotypeField.setVisible(type.equals(EntityType.RESTRICTED_PHENOTYPE));
+        scoreLabel.setVisible(type.equals(EntityType.RESTRICTED_PHENOTYPE));
+        scoreField.setVisible(type.equals(EntityType.RESTRICTED_PHENOTYPE));
+        superCategoriesLabel.setVisible(!type.equals(EntityType.RESTRICTED_PHENOTYPE));
+        superCategoriesField.setVisible(!type.equals(EntityType.RESTRICTED_PHENOTYPE));
+        formulaLabel.setVisible(type.equals(EntityType.ABSTRACT_PHENOTYPE));
+        formulaField.setVisible(type.equals(EntityType.ABSTRACT_PHENOTYPE));
+        ucumLabel.setVisible(type.equals(EntityType.ABSTRACT_PHENOTYPE));
+        ucumField.setVisible(type.equals(EntityType.ABSTRACT_PHENOTYPE));
+        datatypeLabel.setVisible(type.equals(EntityType.ABSTRACT_PHENOTYPE));
+        datatypeField.setVisible(type.equals(EntityType.ABSTRACT_PHENOTYPE));
+        codesLabel.setVisible(!type.equals(EntityType.CATEGORY));
+        codesField.setVisible(!type.equals(EntityType.CATEGORY));
+    }
+
     private void createUIComponents() {
         datatypeField = new JComboBox<>(new OWL2DatatypeComboBoxModel());
-        formulaDatatypeField = new JComboBox<>(new OWL2DatatypeComboBoxModel());
     }
 }
