@@ -9,6 +9,7 @@ import jiconfont.swing.IconFontSwing;
 import org.smith.phenoman.man.PhenotypeManager;
 import org.smith.phenoman.model.category_tree.EntityTreeNode;
 import org.smith.phenoman.model.phenotype.top_level.Entity;
+import org.smith.phenoman.model.phenotype.top_level.Phenotype;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -16,14 +17,17 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
-public class PhenoManEditor extends JFrame implements ChangeListener {
+public class PhenoManEditor extends JFrame implements ActionListener {
     private JTabbedPane tabbedPane;
     private JPanel contentPane;
     private JTextField ontologyPath;
@@ -174,8 +178,31 @@ public class PhenoManEditor extends JFrame implements ChangeListener {
     }
 
     @Override
-    public void stateChanged(ChangeEvent changeEvent) {
-        PhenotypeBean phenotype = new PhenotypeBean((Entity) ((DefaultMutableTreeNode) changeEvent.getSource()).getUserObject());
+    public void actionPerformed(ActionEvent ae) {
+        Entity node = (Entity) ((DefaultMutableTreeNode) ae.getSource()).getUserObject();
+        if (node == null) return;
+
+        PhenotypeBean phenotype;
+        switch (ae.getActionCommand()) {
+            case "inspect":
+                phenotype = new PhenotypeBean(node);
+                break;
+            case "add_category":
+                phenotype = new PhenotypeBean();
+                phenotype.setType(EntityType.CATEGORY);
+                break;
+            case "add_abstract_phenotype":
+                phenotype = new PhenotypeBean();
+                phenotype.setType(EntityType.ABSTRACT_PHENOTYPE);
+                break;
+            case "add_restricted_phenotype":
+                phenotype = new PhenotypeBean();
+                phenotype.setType(EntityType.RESTRICTED_PHENOTYPE);
+                phenotype.setSuperPhenotype((Phenotype) node);
+                break;
+            default: return;
+        }
+
         phenotypeForm.setData(phenotype);
         phenotypeForm.setVisible(true);
     }

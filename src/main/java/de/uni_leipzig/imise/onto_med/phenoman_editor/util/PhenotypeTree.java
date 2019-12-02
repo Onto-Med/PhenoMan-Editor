@@ -14,9 +14,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class PhenotypeTree extends JTree implements ActionListener {
-    ChangeListener listener;
+    ActionListener listener;
 
-    public PhenotypeTree(ChangeListener listener) {
+    public PhenotypeTree(ActionListener listener) {
         super();
         this.listener = listener;
         setCellRenderer(new PhenotypeTreeCellRenderer());
@@ -25,9 +25,9 @@ public class PhenotypeTree extends JTree implements ActionListener {
         addMouseListener(new MouseAdapter() {
             public void mouseReleased(MouseEvent e) {
                 TreePath selectedPath = getPathForLocation(e.getX(), e.getY());
-                setSelectionPath(selectedPath); // update selection to clicked node
+                setSelectionPath(selectedPath);
                 if (e.isPopupTrigger())
-                    popup.show((JComponent) e.getSource(), e.getX(), e.getY());
+                    popup.show((JComponent) e.getSource(), e.getX(), e.getY()); // TODO: overwrite show() to set visibility of menu items
             }
         });
     }
@@ -40,19 +40,6 @@ public class PhenotypeTree extends JTree implements ActionListener {
         node = (DefaultMutableTreeNode) path.getLastPathComponent();
         if (node == null || node.getUserObject() == null || !(node.getUserObject() instanceof Entity)) return;
 
-        switch (ae.getActionCommand()) {
-            case "inspect":
-                listener.stateChanged(new ChangeEvent(node));
-                break;
-            case "add_category":
-                System.out.println("add_category triggered");
-                break;
-            case "add_abstract_phenotype":
-                System.out.println("add_abstract_phenotype triggered");
-                break;
-            case "add_restricted_phenotype":
-                System.out.println("add_restricted_phenotype triggered");
-                break;
-        }
+        listener.actionPerformed(new ActionEvent(node, ActionEvent.ACTION_PERFORMED, ae.getActionCommand()));
     }
 }
