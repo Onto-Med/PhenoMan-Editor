@@ -1,11 +1,8 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor.util;
 
-import de.uni_leipzig.imise.onto_med.phenoman_editor.bean.PhenotypeBean;
 import org.smith.phenoman.model.phenotype.top_level.Entity;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;

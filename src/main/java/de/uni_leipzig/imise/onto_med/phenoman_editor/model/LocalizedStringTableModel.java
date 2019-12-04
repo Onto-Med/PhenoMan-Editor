@@ -57,7 +57,7 @@ public class LocalizedStringTableModel extends AbstractTableModel {
 
     public void setValueAt(Object value, int row, int col) {
         if ((col == 0 || col == 1) && rows.size() <= row)
-            rows.set(row, new LocalizedString());
+            rows.add(row, new LocalizedString());
 
         if (col == 0) {
             rows.get(row).setLocale((Locale) value);
