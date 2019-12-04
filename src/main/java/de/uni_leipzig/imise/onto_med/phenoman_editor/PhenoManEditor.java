@@ -9,11 +9,8 @@ import jiconfont.swing.IconFontSwing;
 import org.smith.phenoman.man.PhenotypeManager;
 import org.smith.phenoman.model.category_tree.EntityTreeNode;
 import org.smith.phenoman.model.phenotype.top_level.Entity;
-import org.smith.phenoman.model.phenotype.top_level.Phenotype;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.*;
 import java.awt.*;
@@ -22,7 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -179,26 +176,38 @@ public class PhenoManEditor extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        Entity node = (Entity) ((DefaultMutableTreeNode) ae.getSource()).getUserObject();
-        if (node == null) return;
+        Entity entity = (Entity) ((DefaultMutableTreeNode) ae.getSource()).getUserObject();
 
         PhenotypeBean phenotype;
         switch (ae.getActionCommand()) {
             case "inspect":
-                phenotype = new PhenotypeBean(node);
+                if (entity == null) return;
+                phenotype = new PhenotypeBean(entity);
                 break;
             case "add_category":
                 phenotype = new PhenotypeBean();
                 phenotype.setType(EntityType.CATEGORY);
+                phenotype.setSuperCategories(Collections.singletonList(entity != null ? entity.asCategory().getName() : "Phenotype_Category")); // this is dirty and should be replaced by a variable access to COP class
                 break;
-            case "add_abstract_phenotype":
+            case "add_abstract_single_phenotype":
                 phenotype = new PhenotypeBean();
-                phenotype.setType(EntityType.ABSTRACT_PHENOTYPE);
+                phenotype.setType(EntityType.ABSTRACT_SINGLE_PHENOTYPE);
+                phenotype.setSuperCategories(Collections.singletonList(entity != null ? entity.asCategory().getName() : "Phenotype_Category"));
+                break;
+            case "add_abstract_calculation_phenotype":
+                phenotype = new PhenotypeBean();
+                phenotype.setType(EntityType.ABSTRACT_CALCULATION_PHENOTYPE);
+                phenotype.setSuperCategories(Collections.singletonList(entity != null ? entity.asCategory().getName() : "Phenotype_Category"));
+                break;
+            case "add_abstract_boolean_phenotype":
+                phenotype = new PhenotypeBean();
+                phenotype.setType(EntityType.ABSTRACT_BOOLEAN_PHENOTYPE);
+                phenotype.setSuperCategories(Collections.singletonList(entity != null ? entity.asCategory().getName() : "Phenotype_Category"));
                 break;
             case "add_restricted_phenotype":
                 phenotype = new PhenotypeBean();
                 phenotype.setType(EntityType.RESTRICTED_PHENOTYPE);
-                phenotype.setSuperPhenotype((Phenotype) node);
+                phenotype.setSuperPhenotype(entity.getName());
                 break;
             default: return;
         }

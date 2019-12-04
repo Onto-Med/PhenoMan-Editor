@@ -4,17 +4,20 @@ import de.imise.onto_api.entities.restrictions.data_range.DataRange;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.LocalizedString;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.smith.phenoman.exception.WrongPhenotypeTypeException;
 import org.smith.phenoman.man.PhenotypeManager;
 import org.smith.phenoman.model.code_system.Code;
-import org.smith.phenoman.model.phenotype.*;
-import org.smith.phenoman.model.phenotype.top_level.*;
+import org.smith.phenoman.model.phenotype.AbstractSingleDatePhenotype;
+import org.smith.phenoman.model.phenotype.AbstractSingleDecimalPhenotype;
+import org.smith.phenoman.model.phenotype.AbstractSinglePhenotype;
+import org.smith.phenoman.model.phenotype.AbstractSingleStringPhenotype;
+import org.smith.phenoman.model.phenotype.top_level.Category;
+import org.smith.phenoman.model.phenotype.top_level.Entity;
+import org.smith.phenoman.model.phenotype.top_level.RestrictedPhenotype;
+import org.smith.phenoman.model.phenotype.top_level.Title;
 
 import java.math.BigDecimal;
 import java.util.*;
-
 import java.util.stream.Collectors;
 
 public class PhenotypeBean {
@@ -26,7 +29,7 @@ public class PhenotypeBean {
 	private String mainTitle;
 
 	private List<String> superCategories = new ArrayList<>();
-	private Phenotype superPhenotype;
+	private String superPhenotype;
 
 	/*** localized: ***/
 	private List<LocalizedString> titles = new ArrayList<>();
@@ -51,10 +54,19 @@ public class PhenotypeBean {
 		this();
 		if (entity.isCategory()) {
 			type = EntityType.CATEGORY;
+			superCategories = entity.asCategory().getSuperCategoriesOrEmptyList();
 		} else if (entity.isAbstractPhenotype()) {
-			type = EntityType.ABSTRACT_PHENOTYPE;
+			if (entity.isAbstractSinglePhenotype()) {
+				type = EntityType.ABSTRACT_SINGLE_PHENOTYPE;
+			} else if (entity.isAbstractCalculationPhenotype()) {
+				type = EntityType.ABSTRACT_CALCULATION_PHENOTYPE;
+			} else {
+				type = EntityType.ABSTRACT_BOOLEAN_PHENOTYPE;
+			}
+			superCategories = Arrays.asList(entity.asAbstractPhenotype().getCategories());
 		} else {
 			type = EntityType.RESTRICTED_PHENOTYPE;
+			superPhenotype = ((RestrictedPhenotype) entity).getAbstractPhenotypeName();
 		}
 		id        = entity.getName();
 		mainTitle = entity.getMainTitleText();
@@ -79,7 +91,6 @@ public class PhenotypeBean {
 
 		if (!entity.isCategory() && !entity.isAbstractPhenotype()) { // is restricted phenotype
 			score = ((RestrictedPhenotype) entity).getScore();
-			// superPhenotype = model.getSuperPhenotype(entity);
             if (entity.isRangePhenotype())
                 restriction = entity.asRangePhenotype().getPhenotypeRange();
 		}
@@ -97,7 +108,7 @@ public class PhenotypeBean {
 			relations.forEach(category::addRelatedConcept);
 
 			model.addCategory(category);
-		} else if (type.equals(EntityType.ABSTRACT_PHENOTYPE)) {
+		} else if (type.isAbstractPhenotype()) {
 			System.out.println("writing abstract phenotype to model");
             AbstractSinglePhenotype phenotype;
             switch (datatype) {
@@ -202,11 +213,11 @@ public class PhenotypeBean {
 		this.ucum = ucum;
 	}
 
-	public Phenotype getSuperPhenotype() {
+	public String getSuperPhenotype() {
 		return superPhenotype;
 	}
 
-	public void setSuperPhenotype(Phenotype superPhenotype) {
+	public void setSuperPhenotype(String superPhenotype) {
 		this.superPhenotype = superPhenotype;
 	}
 

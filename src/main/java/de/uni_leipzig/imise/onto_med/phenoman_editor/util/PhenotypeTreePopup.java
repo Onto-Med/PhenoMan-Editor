@@ -2,41 +2,100 @@ package de.uni_leipzig.imise.onto_med.phenoman_editor.util;
 
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import org.smith.phenoman.model.phenotype.top_level.Entity;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class PhenotypeTreePopup extends JPopupMenu {
+
+
+    private final JMenuItem inspectItem;
+    private final JSeparator inspectSeparator;
+    private final JMenuItem addCategoryItem;
+    private final JMenuItem addAbstractSinglePhenotypeItem;
+    private final JMenuItem addAbstractCalculationPhenotypeItem;
+    private final JMenuItem addAbstractBooleanPhenotypeItem;
+    private final JMenuItem addRestrictedPhenotypeItem;
+    private final JSeparator deleteSeparator;
+    private final JMenuItem deleteItem;
+
+
     public PhenotypeTreePopup(ActionListener listener) {
         IconFontSwing.register(FontAwesome.getIconFont());
 
-        JMenuItem inspectItem = new JMenuItem("Inspect", IconFontSwing.buildIcon(FontAwesome.SEARCH, 12));
+        inspectItem = new JMenuItem("Inspect", IconFontSwing.buildIcon(FontAwesome.SEARCH, 12));
         inspectItem.addActionListener(listener);
         inspectItem.setActionCommand("inspect");
 
-        JMenuItem addCategoryItem = new JMenuItem("Add category", IconFontSwing.buildIcon(FontAwesome.PLUS, 12, new Color(108, 117, 125)));
+        inspectSeparator = new JSeparator();
+
+        addCategoryItem = new JMenuItem("Add category", IconFontSwing.buildIcon(FontAwesome.PLUS, 12, new Color(108, 117, 125)));
         addCategoryItem.setActionCommand("add_category");
         addCategoryItem.addActionListener(listener);
 
-        JMenuItem addAbstractPhenotypeItem = new JMenuItem("Add abstract phenotype", IconFontSwing.buildIcon(FontAwesome.PLUS, 12, new Color(0, 123, 255)));
-        addAbstractPhenotypeItem.setActionCommand("add_abstract_phenotype");
-        addAbstractPhenotypeItem.addActionListener(listener);
+        addAbstractSinglePhenotypeItem = new JMenuItem("Add single phenotype", IconFontSwing.buildIcon(FontAwesome.PLUS, 12, new Color(0, 123, 255)));
+        addAbstractSinglePhenotypeItem.setActionCommand("add_abstract_single_phenotype");
+        addAbstractSinglePhenotypeItem.addActionListener(listener);
 
-        JMenuItem addRestrictedPhenotypeItem = new JMenuItem("Add restricted phenotype", IconFontSwing.buildIcon(FontAwesome.PLUS, 12, new Color(255, 193, 7)));
+        addAbstractCalculationPhenotypeItem = new JMenuItem("Add calculated phenotype", IconFontSwing.buildIcon(FontAwesome.PLUS_SQUARE, 12, new Color(0, 123, 255)));
+        addAbstractCalculationPhenotypeItem.setActionCommand("add_abstract_calculation_phenotype");
+        addAbstractCalculationPhenotypeItem.addActionListener(listener);
+
+        addAbstractBooleanPhenotypeItem = new JMenuItem("Add boolean phenotype", IconFontSwing.buildIcon(FontAwesome.PLUS_CIRCLE, 12, new Color(0, 123, 255)));
+        addAbstractBooleanPhenotypeItem.setActionCommand("add_abstract_boolean_phenotype");
+        addAbstractBooleanPhenotypeItem.addActionListener(listener);
+
+        addRestrictedPhenotypeItem = new JMenuItem("Add restriction", IconFontSwing.buildIcon(FontAwesome.PLUS, 12, new Color(255, 193, 7)));
         addRestrictedPhenotypeItem.setActionCommand("add_restricted_phenotype");
         addRestrictedPhenotypeItem.addActionListener(listener);
 
-        JMenuItem deleteItem = new JMenuItem("Delete", IconFontSwing.buildIcon(FontAwesome.TRASH_O, 12, new Color(220, 53, 69)));
+        deleteSeparator = new JSeparator();
+
+        deleteItem = new JMenuItem("Delete", IconFontSwing.buildIcon(FontAwesome.TRASH_O, 12, new Color(220, 53, 69)));
         deleteItem.addActionListener(listener);
         deleteItem.setActionCommand("delete");
 
         add(inspectItem);
-        add(new JSeparator());
+        add(inspectSeparator);
         add(addCategoryItem);
-        add(addAbstractPhenotypeItem);
+        add(addAbstractSinglePhenotypeItem);
+        add(addAbstractCalculationPhenotypeItem);
+        add(addAbstractBooleanPhenotypeItem);
         add(addRestrictedPhenotypeItem);
-        add(new JSeparator());
+        add(deleteSeparator);
         add(deleteItem);
+    }
+
+    @Override
+    public void show(Component c, int x, int y) {
+        DefaultMutableTreeNode node = ((DefaultMutableTreeNode) ((PhenotypeTree) c).getLastSelectedPathComponent());
+        Entity entity = (Entity) node.getUserObject();
+
+        setInspectVisible(entity != null);
+        addCategoryItem.setVisible(entity == null || entity.isCategory());
+        setAbstractVisible(entity == null || entity.isCategory());
+        addRestrictedPhenotypeItem.setVisible(entity != null && entity.isAbstractPhenotype());
+        setDeleteVisible(entity != null);
+
+        super.show(c, x, y);
+    }
+
+    private void setInspectVisible(boolean visible) {
+        inspectItem.setVisible(visible);
+        inspectSeparator.setVisible(visible);
+    }
+
+    private void setDeleteVisible(boolean visible) {
+        deleteItem.setVisible(visible);
+        deleteSeparator.setVisible(visible);
+    }
+
+    private void setAbstractVisible(boolean visible) {
+        addAbstractSinglePhenotypeItem.setVisible(visible);
+        addAbstractCalculationPhenotypeItem.setVisible(visible);
+        addAbstractBooleanPhenotypeItem.setVisible(visible);
     }
 }

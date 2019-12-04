@@ -24,19 +24,15 @@ public class PhenotypeTree extends JTree implements ActionListener {
                 TreePath selectedPath = getPathForLocation(e.getX(), e.getY());
                 setSelectionPath(selectedPath);
                 if (e.isPopupTrigger())
-                    popup.show((JComponent) e.getSource(), e.getX(), e.getY()); // TODO: overwrite show() to set visibility of menu items
+                    popup.show((JComponent) e.getSource(), e.getX(), e.getY());
             }
         });
     }
 
     public void actionPerformed(ActionEvent ae) {
-        DefaultMutableTreeNode node;
         TreePath path = this.getSelectionPath();
         if (path == null) return;
 
-        node = (DefaultMutableTreeNode) path.getLastPathComponent();
-        if (node == null || node.getUserObject() == null || !(node.getUserObject() instanceof Entity)) return;
-
-        listener.actionPerformed(new ActionEvent(node, ActionEvent.ACTION_PERFORMED, ae.getActionCommand()));
+        listener.actionPerformed(new ActionEvent(path.getLastPathComponent(), ActionEvent.ACTION_PERFORMED, ae.getActionCommand()));
     }
 }
