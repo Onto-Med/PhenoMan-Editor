@@ -117,8 +117,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
     }
 
     private MutableTreeNode convertToTreeNode(EntityTreeNode entityNode) {
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode(entityNode.getName(), true);
-        node.setUserObject(entityNode.getEntity());
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(entityNode.getEntity(), true);
         entityNode.getChildren().forEach(c -> node.add(convertToTreeNode(c)));
         return node;
     }

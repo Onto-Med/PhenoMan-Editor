@@ -8,12 +8,7 @@ import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
-import org.smith.phenoman.exception.WrongPhenotypeTypeException;
 import org.smith.phenoman.man.PhenotypeManager;
-import org.smith.phenoman.model.phenotype.AbstractCalculationDecimalPhenotype;
-import org.smith.phenoman.model.phenotype.AbstractCalculationPhenotype;
-import org.smith.phenoman.model.phenotype.RestrictedCalculationPhenotype;
-import org.smith.phenoman.model.phenotype.top_level.Entity;
 
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
@@ -21,7 +16,6 @@ import javax.swing.text.NumberFormatter;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class PhenotypeForm extends JPanel {
     private PhenotypeManager model;
