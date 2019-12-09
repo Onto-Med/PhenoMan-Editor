@@ -81,13 +81,14 @@ public class PhenotypeForm extends JPanel {
             superCategoriesField.setText(String.join("; ", data.getSuperCategories()));
 
         if (type.isAbstractPhenotype()) {
-            datatypeField.getModel().setSelectedItem(data.getDatatype());
             ucumField.setText(data.getUcum());
-            formulaField.setText(data.getFormula());
             codesField.setData(data.getCodes());
         }
 
-        if (type.equals(EntityType.RESTRICTED_PHENOTYPE)) {
+        if (type.hasFormula()) formulaField.setText(data.getFormula());
+        if (type.hasDatatype()) datatypeField.getModel().setSelectedItem(data.getDatatype());
+
+        if (type.isRestrictedPhenotype()) {
             scoreField.setValue(data.getScore());
             codesField.setData(data.getCodes());
             if (data.getSuperPhenotype() != null)
@@ -149,16 +150,16 @@ public class PhenotypeForm extends JPanel {
     }
 
     private void toggleFields() {
-        restrictionLabel.setVisible(type.equals(EntityType.RESTRICTED_PHENOTYPE));
-        restrictionField.setVisible(type.equals(EntityType.RESTRICTED_PHENOTYPE));
-        superPhenotypeLabel.setVisible(type.equals(EntityType.RESTRICTED_PHENOTYPE));
-        superPhenotypeField.setVisible(type.equals(EntityType.RESTRICTED_PHENOTYPE));
-        scoreLabel.setVisible(type.equals(EntityType.RESTRICTED_PHENOTYPE));
-        scoreField.setVisible(type.equals(EntityType.RESTRICTED_PHENOTYPE));
-        superCategoriesLabel.setVisible(!type.equals(EntityType.RESTRICTED_PHENOTYPE));
-        superCategoriesField.setVisible(!type.equals(EntityType.RESTRICTED_PHENOTYPE));
-        datatypeLabel.setVisible(type.isAbstractPhenotype());
-        datatypeField.setVisible(type.isAbstractPhenotype());
+        restrictionLabel.setVisible(type.hasRestriction());
+        restrictionField.setVisible(type.hasRestriction());
+        superPhenotypeLabel.setVisible(type.isRestrictedPhenotype());
+        superPhenotypeField.setVisible(type.isRestrictedPhenotype());
+        scoreLabel.setVisible(type.isRestrictedPhenotype());
+        scoreField.setVisible(type.isRestrictedPhenotype());
+        superCategoriesLabel.setVisible(type.isAbstractPhenotype());
+        superCategoriesField.setVisible(type.isAbstractPhenotype());
+        datatypeLabel.setVisible(type.hasDatatype());
+        datatypeField.setVisible(type.hasDatatype());
         formulaLabel.setVisible(type.hasFormula());
         formulaField.setVisible(type.hasFormula());
         ucumLabel.setVisible(type.equals(EntityType.ABSTRACT_SINGLE_PHENOTYPE));

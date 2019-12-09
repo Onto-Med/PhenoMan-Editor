@@ -209,7 +209,13 @@ public class PhenoManEditor extends JFrame implements ActionListener {
                 break;
             case "add_restricted_phenotype":
                 phenotype = new PhenotypeBean();
-                phenotype.setType(EntityType.RESTRICTED_PHENOTYPE);
+                if (entity.isAbstractSinglePhenotype()) {
+                    phenotype.setType(EntityType.RESTRICTED_SINGLE_PHENOTYPE);
+                } else if (entity.isAbstractCalculationPhenotype()) {
+                    phenotype.setType(EntityType.RESTRICTED_CALCULATION_PHENOTYPE);
+                } else {
+                    phenotype.setType(EntityType.RESTRICTED_BOOLEAN_PHENOTYPE);
+                }
                 phenotype.setSuperPhenotype(entity.getName());
                 break;
             case "delete":

@@ -21,8 +21,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class PhenotypeBean {
-	private PhenotypeManager model;
-
 	private EntityType type;
 
 	private String id;
@@ -52,20 +50,12 @@ public class PhenotypeBean {
 
 	public PhenotypeBean(Entity entity) {
 		this();
+		type = EntityType.getEntityType(entity);
 		if (entity.isCategory()) {
-			type = EntityType.CATEGORY;
 			superCategories = entity.asCategory().getSuperCategoriesOrEmptyList();
 		} else if (entity.isAbstractPhenotype()) {
-			if (entity.isAbstractSinglePhenotype()) {
-				type = EntityType.ABSTRACT_SINGLE_PHENOTYPE;
-			} else if (entity.isAbstractCalculationPhenotype()) {
-				type = EntityType.ABSTRACT_CALCULATION_PHENOTYPE;
-			} else {
-				type = EntityType.ABSTRACT_BOOLEAN_PHENOTYPE;
-			}
 			superCategories = Arrays.asList(entity.asAbstractPhenotype().getCategories());
 		} else {
-			type = EntityType.RESTRICTED_PHENOTYPE;
 			superPhenotype = ((RestrictedPhenotype) entity).getAbstractPhenotypeName();
 		}
 		id        = entity.getName();
@@ -93,6 +83,9 @@ public class PhenotypeBean {
 			score = ((RestrictedPhenotype) entity).getScore();
             if (entity.isRangePhenotype())
                 restriction = entity.asRangePhenotype().getPhenotypeRange();
+            if (entity.isRestrictedBooleanPhenotype()) {
+            	formula = entity.asRestrictedBooleanPhenotype().getFormula();
+			}
 		}
 	}
 
@@ -127,7 +120,7 @@ public class PhenotypeBean {
             phenotype.setUnit(ucum);
 
             model.addAbstractSinglePhenotype(phenotype);
-        } else if (type.equals(EntityType.RESTRICTED_PHENOTYPE)) {
+        } else if (type.isRestrictedPhenotype()) {
 			System.out.println("writing restricted phenotype to model");
 		}
         model.write();
