@@ -1,9 +1,6 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor.util;
 
 import org.smith.phenoman.model.phenotype.top_level.Entity;
-import org.smith.phenoman.model.phenotype.top_level.RestrictedPhenotype;
-
-import java.util.Arrays;
 
 public enum EntityType {
     CATEGORY("Category"),

@@ -1,20 +1,13 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor.model;
 
-import de.uni_leipzig.imise.onto_med.phenoman_editor.util.LocalizedString;
-
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class StringTableModel extends AbstractTableModel {
     private List<String> rows = new ArrayList<>();
 
     public StringTableModel() {}
-
-    public StringTableModel(List<String> rows) {
-        setRows(rows);
-    }
 
     public void setRows(List<String> rows) {
         this.rows = rows;

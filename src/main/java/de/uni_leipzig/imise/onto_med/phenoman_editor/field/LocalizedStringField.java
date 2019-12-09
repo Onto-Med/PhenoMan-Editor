@@ -8,9 +8,9 @@ import jiconfont.swing.IconFontSwing;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class LocalizedStringField extends JPanel {
     private JPanel contentPane;
@@ -24,12 +24,9 @@ public class LocalizedStringField extends JPanel {
         addRowButton.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS, 12));
         addRowButton.addActionListener(actionEvent -> model.addRow(new LocalizedString()));
         deleteRowButton.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH_O, 12));
-        deleteRowButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if (table.getSelectedRow() == -1) return;
-                model.removeRow(table.getSelectedRow());
-            }
+        deleteRowButton.addActionListener(actionEvent -> {
+            if (table.getSelectedRow() == -1) return;
+            model.removeRow(table.getSelectedRow());
         });
     }
 

@@ -3,7 +3,6 @@ package de.uni_leipzig.imise.onto_med.phenoman_editor.util;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import org.smith.phenoman.model.phenotype.top_level.Entity;
-import org.smith.phenoman.model.phenotype.top_level.Phenotype;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;

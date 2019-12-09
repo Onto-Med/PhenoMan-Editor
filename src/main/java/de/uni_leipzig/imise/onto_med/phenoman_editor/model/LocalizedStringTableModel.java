@@ -12,10 +12,6 @@ public class LocalizedStringTableModel extends AbstractTableModel {
 
     public LocalizedStringTableModel() {}
 
-    public LocalizedStringTableModel(List<LocalizedString> rows) {
-        setRows(rows);
-    }
-
     public void setRows(List<LocalizedString> rows) {
         this.rows = rows;
         fireTableDataChanged();
