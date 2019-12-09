@@ -97,8 +97,9 @@ public class PhenotypeBean {
 	}
 
 	public void addToModel(PhenotypeManager model) throws WrongPhenotypeTypeException, IllegalArgumentException {
+		if (id == null || id.isBlank())	id = UUID.randomUUID().toString();
+
         if (type.equals(EntityType.CATEGORY)) {
-			System.out.println("writing category to model");
         	Category category = new Category(id, mainTitle);
 
         	category.setSuperCategories(superCategories.toArray(String[]::new));
@@ -109,7 +110,6 @@ public class PhenotypeBean {
 
 			model.addCategory(category);
 		} else if (type.isAbstractPhenotype()) {
-			System.out.println("writing abstract phenotype to model");
             AbstractSinglePhenotype phenotype;
             switch (datatype) {
 				case XSD_DECIMAL: phenotype = new AbstractSingleDecimalPhenotype(id, mainTitle); break;

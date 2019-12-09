@@ -32,7 +32,11 @@ public class PhenotypeTreeCellRenderer extends DefaultTreeCellRenderer {
     }
 
     private void setLabelFromEntity(Entity entity) {
-        setText(entity.getMainTitleText());
+        if (entity.getMainTitleText().isBlank()) {
+            setText(entity.getName());
+        } else {
+            setText(entity.getMainTitleText());
+        }
         FontAwesome fontAwesome;
         Color color;
 
