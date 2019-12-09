@@ -69,23 +69,27 @@ public class PhenoManEditor extends JFrame implements ActionListener {
 
 		loadOntologyButton.addActionListener(actionEvent -> {
 			String path = ontologyPath.getText();
-			if (!path.isBlank()) {
-				try {
-				    doInBackground("Loading ontology...", () -> {
-                        model = new PhenotypeManager(path, false);
-                        phenotypeForm.setModel(model);
-                        tabbedPane.setEnabledAt(2, true);
-                        tabbedPane.setSelectedIndex(2);
-                        return null;
-                    });
-				} catch (Exception e) {
-					e.printStackTrace();
-					JOptionPane.showMessageDialog(
-							new JFrame(),
-							String.format("Could not load ontology from file %s!\nReason: %s", path, e.getLocalizedMessage())
-					);
-				}
-			}
+			if (path.isBlank()) return;
+
+			doInBackground("Loading ontology...", () -> {
+			    model = null;
+			    setTitle("PhenoMan-Editor");
+			    try {
+			        model = new PhenotypeManager(path, false);
+			    } catch (Exception e) {
+			        e.printStackTrace();
+			        JOptionPane.showMessageDialog(
+			                new JFrame(),
+                            String.format("Could not load ontology from file %s!\nReason: %s", path, e.getLocalizedMessage())
+                    );
+			    }
+			    setTitle("PhenoMan-Editor - " + path);
+			    phenotypeForm.setModel(model);
+			    tabbedPane.setEnabledAt(2, true);
+			    tabbedPane.setSelectedIndex(2);
+			    reloadEntityTree();
+			    return null;
+			});
 		});
 		reloadButton.setIcon(IconFontSwing.buildIcon(FontAwesome.REFRESH, 12));
         reloadButton.addActionListener(actionEvent -> {

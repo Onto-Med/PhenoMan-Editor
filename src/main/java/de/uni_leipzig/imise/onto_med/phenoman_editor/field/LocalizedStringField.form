@@ -39,6 +39,7 @@
         </constraints>
         <properties>
           <text value="Delete row"/>
+          <toolTipText value="Click here to delete the selected row"/>
         </properties>
       </component>
       <vspacer id="54e1c">
