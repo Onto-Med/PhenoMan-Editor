@@ -23,6 +23,11 @@ public class PhenotypeTree extends JTree implements ActionListener {
                 if (e.isPopupTrigger())
                     popup.show((JComponent) e.getSource(), e.getX(), e.getY());
             }
+            public void mousePressed(MouseEvent e) {
+                TreePath selectedPath = getPathForLocation(e.getX(), e.getY());
+                if (selectedPath != null && e.getClickCount() == 2)
+                    listener.actionPerformed(new ActionEvent(selectedPath.getLastPathComponent(), ActionEvent.ACTION_PERFORMED, "inspect"));
+            }
         });
     }
 
