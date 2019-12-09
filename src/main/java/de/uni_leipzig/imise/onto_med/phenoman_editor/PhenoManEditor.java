@@ -30,16 +30,18 @@ public class PhenoManEditor extends JFrame implements ActionListener {
     private JTextField ontologyPath;
     private JButton browseButton;
 	private JButton loadOntologyButton;
-	private JPanel editorPane;
     private JButton reloadButton;
     private PhenotypeForm phenotypeForm;
-    private JLabel copImage;
-    private JLabel exampleImage;
     private PhenotypeTree tree;
     private JTextField treeSearchField;
     private JScrollPane phenotypeFormScrollPane;
     private JScrollPane introductionScrollPane;
     private PhenotypeManager model;
+
+    @SuppressWarnings("unused")
+    private JLabel copImage;
+    @SuppressWarnings("unused")
+    private JLabel exampleImage;
 
     public PhenoManEditor() {
         IconFontSwing.register(FontAwesome.getIconFont());
@@ -92,9 +94,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
 			});
 		});
 		reloadButton.setIcon(IconFontSwing.buildIcon(FontAwesome.REFRESH, 12));
-        reloadButton.addActionListener(actionEvent -> {
-            reloadEntityTree();
-        });
+        reloadButton.addActionListener(actionEvent -> reloadEntityTree());
         treeSearchField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -136,6 +136,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         });
     }
 
+    @SuppressWarnings("SameParameterValue")
     private <T> void doInBackground(String dialog, Callable<T> function) {
         JFrame frame = new JFrame();
         frame.setIconImage(new ImageIcon(Objects.requireNonNull(PhenoManEditor.class.getClassLoader().getResource("images/favicon.png"))).getImage());
