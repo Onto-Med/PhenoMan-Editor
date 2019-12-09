@@ -89,9 +89,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
 		});
 		reloadButton.setIcon(IconFontSwing.buildIcon(FontAwesome.REFRESH, 12));
         reloadButton.addActionListener(actionEvent -> {
-            if (model == null) return;
-            EntityTreeNode node = model.getEntityTree(true);
-            tree.setModel(new DefaultTreeModel(convertToTreeNode(node)));
+            reloadEntityTree();
         });
         treeSearchField.addKeyListener(new KeyAdapter() {
             @Override
@@ -173,6 +171,12 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         tree.setShowsRootHandles(true);
     }
 
+    private void reloadEntityTree() {
+        if (model == null) return;
+        EntityTreeNode node = model.getEntityTree(true);
+        tree.setModel(new DefaultTreeModel(convertToTreeNode(node)));
+    }
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         Entity entity = (Entity) ((DefaultMutableTreeNode) ae.getSource()).getUserObject();
@@ -208,6 +212,11 @@ public class PhenoManEditor extends JFrame implements ActionListener {
                 phenotype.setType(EntityType.RESTRICTED_PHENOTYPE);
                 phenotype.setSuperPhenotype(entity.getName());
                 break;
+            case "delete":
+                model.removeEntities(entity.getName());
+                model.write();
+                reloadEntityTree();
+                return;
             default: return;
         }
 
