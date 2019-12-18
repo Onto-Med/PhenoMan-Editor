@@ -197,6 +197,7 @@ public class PhenotypeForm extends JPanel {
     private void createUIComponents() {
         datatypeField = new JComboBox<>(new OWL2DatatypeComboBoxModel());
         metadataCollapsiblePane = new JXCollapsiblePane();
+        metadataCollapsiblePane.setCollapsed(true);
         showAdditionalMetadataButton = new JButton(metadataCollapsiblePane.getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION));
     }
 }
