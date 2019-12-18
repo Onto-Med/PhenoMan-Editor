@@ -7,15 +7,8 @@ import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.smith.phenoman.exception.WrongPhenotypeTypeException;
 import org.smith.phenoman.man.PhenotypeManager;
 import org.smith.phenoman.model.code_system.Code;
-import org.smith.phenoman.model.phenotype.AbstractSingleDatePhenotype;
-import org.smith.phenoman.model.phenotype.AbstractSingleDecimalPhenotype;
-import org.smith.phenoman.model.phenotype.AbstractSinglePhenotype;
-import org.smith.phenoman.model.phenotype.AbstractSingleStringPhenotype;
-import org.smith.phenoman.model.phenotype.top_level.Category;
-import org.smith.phenoman.model.phenotype.top_level.Entity;
-import org.smith.phenoman.model.phenotype.top_level.RestrictedPhenotype;
-import org.smith.phenoman.model.phenotype.top_level.Title;
-
+import org.smith.phenoman.model.phenotype.*;
+import org.smith.phenoman.model.phenotype.top_level.*;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,6 +34,7 @@ public class PhenotypeBean {
 	private String formula;
 
 	private DataRange restriction;
+	private Boolean negated;
 
 	private String ucum;
 	private BigDecimal score;
@@ -94,13 +88,8 @@ public class PhenotypeBean {
 
         if (type.equals(EntityType.CATEGORY)) {
         	Category category = new Category(id, mainTitle);
-
         	category.setSuperCategories(superCategories.toArray(String[]::new));
-			descriptions.forEach(d -> category.addDescription(d.getString(), d.getLocale().toLanguageTag()));
-			titles.forEach(t -> category.addTitle(new Title(t.getString(), t.getLocale().toLanguageTag())));
-			synonyms.forEach(s -> category.addLabel(s.getString(), s.getLocale().toLanguageTag()));
-			relations.forEach(category::addRelatedConcept);
-
+        	addMetadata(category);
 			model.addCategory(category);
 		} else if (type.isAbstractPhenotype()) {
             AbstractSinglePhenotype phenotype;
@@ -108,20 +97,28 @@ public class PhenotypeBean {
 				case XSD_DECIMAL: phenotype = new AbstractSingleDecimalPhenotype(id, mainTitle); break;
                 case XSD_STRING: phenotype = new AbstractSingleStringPhenotype(id, mainTitle); break;
                 case XSD_DATE_TIME: phenotype = new AbstractSingleDatePhenotype(id, mainTitle); break;
-                default: throw new IllegalArgumentException(datatype.getShortForm() + " is not supported");
+                default: throw new IllegalArgumentException(datatype.getShortForm() + " is not supported.");
             }
-
             phenotype.setCategories(superCategories.toArray(String[]::new));
-            descriptions.forEach(d -> phenotype.addDescription(d.getString(), d.getLocale().toLanguageTag()));
-            titles.forEach(t -> phenotype.addTitle(new Title(t.getString(), t.getLocale().toLanguageTag())));
-            synonyms.forEach(s -> phenotype.addLabel(s.getString(), s.getLocale().toLanguageTag()));
-            relations.forEach(phenotype::addRelatedConcept);
-            codes.forEach(c -> phenotype.addCode(new Code(c)));
+            addMetadata(phenotype);
             phenotype.setUnit(ucum);
-
             model.addAbstractSinglePhenotype(phenotype);
         } else if (type.isRestrictedPhenotype()) {
-			System.out.println("writing restricted phenotype to model");
+        	Phenotype abstractPhenotype = model.getPhenotype(superPhenotype);
+			if (abstractPhenotype == null) {
+				throw new IllegalArgumentException("super phenotype is missing");
+			} else if (abstractPhenotype.isAbstractBooleanPhenotype()) {
+				RestrictedBooleanPhenotype phenotype = abstractPhenotype.asAbstractBooleanPhenotype().createRestrictedPhenotype(id, mainTitle, model.getManchesterSyntaxExpression(formula));
+				addMetadata(phenotype);
+				phenotype.setScore(score);
+				model.addRestrictedBooleanPhenotype(phenotype);
+			} else if (abstractPhenotype.isAbstractCalculationPhenotype()) {
+				model.addRestrictedCalculationPhenotype(createRestrictedCalculationPhenotype(abstractPhenotype.asAbstractCalculationPhenotype()));
+			} else if (abstractPhenotype.isAbstractSinglePhenotype()) {
+				model.addRestrictedSinglePhenotype(createRestrictedSinglePhenotype(abstractPhenotype.asAbstractSinglePhenotype()));
+			} else {
+				throw new IllegalArgumentException("Could not determine datatype of super phenotype.");
+			}
 		}
         model.write();
     }
@@ -246,7 +243,15 @@ public class PhenotypeBean {
         this.restriction = restriction;
     }
 
-    private List<LocalizedString> stringMapToLocalizedStringList(Map<String, Set<String>> map) {
+	public Boolean getNegated() {
+		return negated;
+	}
+
+	public void setNegated(Boolean negated) {
+		this.negated = negated;
+	}
+
+	private List<LocalizedString> stringMapToLocalizedStringList(Map<String, Set<String>> map) {
 		List<LocalizedString> stringList = new ArrayList<>();
 		map.forEach((lang, list) ->
 				list.forEach(text -> stringList.add(new LocalizedString(text, Locale.forLanguageTag(lang))))
@@ -260,5 +265,45 @@ public class PhenotypeBean {
 				stringList.add(new LocalizedString(title.getTitleText(), Locale.forLanguageTag(lang)))
 		);
 		return stringList;
+	}
+
+	private RestrictedSinglePhenotype createRestrictedSinglePhenotype(AbstractSinglePhenotype abstractPhenotype) {
+		RestrictedSinglePhenotype phenotype;
+		if (abstractPhenotype.hasBooleanDatatype()) {
+			phenotype = abstractPhenotype.asAbstractSingleBooleanPhenotype().createRestrictedPhenotype(id, mainTitle, restriction.asBooleanRange(), negated);
+		} else if (abstractPhenotype.hasDecimalDatatype()) {
+			phenotype = abstractPhenotype.asAbstractSingleDecimalPhenotype().createRestrictedPhenotype(id, mainTitle, restriction.asDecimalRange(), negated);
+		} else if (abstractPhenotype.hasDateDatatype()) {
+			phenotype = abstractPhenotype.asAbstractSingleDatePhenotype().createRestrictedPhenotype(id, mainTitle, restriction.asDateRange(), negated);
+		} else if (abstractPhenotype.hasStringDatatype()) {
+			phenotype = abstractPhenotype.asAbstractSingleStringPhenotype().createRestrictedPhenotype(id, mainTitle, restriction.asStringRange(), negated);
+		} else {
+			throw new IllegalArgumentException("Super phenotype has a not supported data type. Maybe the ontology is inconsistent or was created with an old version of PhenoMan?");
+		}
+		addMetadata(phenotype);
+		phenotype.setScore(score);
+		return phenotype;
+	}
+
+	private RestrictedCalculationPhenotype createRestrictedCalculationPhenotype(AbstractCalculationPhenotype abstractPhenotype) {
+		RestrictedCalculationPhenotype phenotype;
+		if (abstractPhenotype.hasBooleanDatatype()) {
+			phenotype = abstractPhenotype.asAbstractCalculationBooleanPhenotype().createRestrictedPhenotype(id, mainTitle, restriction.asBooleanRange(), negated);
+		} else if (abstractPhenotype.hasDateDatatype()) {
+			phenotype = abstractPhenotype.asAbstractCalculationDatePhenotype().createRestrictedPhenotype(id, mainTitle, restriction.asDateRange(), negated);
+		} else if (abstractPhenotype.hasDecimalDatatype()) {
+			phenotype = abstractPhenotype.asAbstractCalculationDecimalPhenotype().createRestrictedPhenotype(id, mainTitle, restriction.asDecimalRange(), negated);
+		} else throw new IllegalArgumentException("RestrictedCalculationPhenotype could not be created because its super phenotype has an invalid datatype");
+		addMetadata(phenotype);
+		phenotype.setScore(score);
+		return phenotype;
+	}
+
+	private void addMetadata(Entity entity) {
+		titles.forEach(t -> entity.addTitle(new Title(t.getString(), t.getLocale().toLanguageTag())));
+		synonyms.forEach(s -> entity.addLabel(s.getString(), s.getLocale().toLanguageTag()));
+		descriptions.forEach(d -> entity.addDescription(d.getString(), d.getLocale().toLanguageTag()));
+		relations.forEach(entity::addRelatedConcept);
+		codes.forEach(c -> entity.addCode(new Code(c)));
 	}
 }

@@ -1,18 +1,22 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor.form;
 
 import de.uni_leipzig.imise.onto_med.phenoman_editor.bean.PhenotypeBean;
+import de.uni_leipzig.imise.onto_med.phenoman_editor.field.DataRangeField;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.field.LocalizedStringField;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.field.StringField;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.model.OWL2DatatypeComboBoxModel;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import org.jdesktop.swingx.JXCollapsiblePane;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.smith.phenoman.man.PhenotypeManager;
 
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -35,8 +39,7 @@ public class PhenotypeForm extends JPanel {
     private StringField codesField;
     private JTextField superCategoriesField;
     private JComboBox<OWL2Datatype> datatypeField;
-    private JTextArea restrictionField;
-    private JLabel restrictionLabel;
+    private JLabel rangeLabel;
     private JLabel scoreLabel;
     private JLabel ucumLabel;
     private JLabel formulaLabel;
@@ -44,9 +47,16 @@ public class PhenotypeForm extends JPanel {
     private JLabel superPhenotypeLabel;
     private JLabel superCategoriesLabel;
     private JLabel codesLabel;
+    private DataRangeField rangeField;
+    private JCheckBox negatedCheckBox;
+    private JLabel negatedLabel;
+    private JXCollapsiblePane metadataCollapsiblePane;
+    private JButton showAdditionalMetadataButton;
     private EntityType type;
+    private ActionListener listener;
 
-    public PhenotypeForm() {
+    public PhenotypeForm(ActionListener listener) {
+        this.listener = listener;
         scoreField.setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(new DecimalFormat("###0.00"))));
         IconFontSwing.register(FontAwesome.getIconFont());
         saveButton.setIcon(IconFontSwing.buildIcon(FontAwesome.FLOPPY_O, 12));
@@ -55,11 +65,18 @@ public class PhenotypeForm extends JPanel {
 
             try {
                 getData(new PhenotypeBean()).addToModel(model);
+                listener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "phenotype_saved"));
             } catch (Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(
                         new JFrame(), String.format("Could not save phenotype!\nReason: %s", e.getLocalizedMessage())
                 );
+            }
+        });
+        showAdditionalMetadataButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                showAdditionalMetadataButton.setText((!metadataCollapsiblePane.isCollapsed() ? "Show" : "Hide") + " additional metadata");
             }
         });
     }
@@ -94,7 +111,7 @@ public class PhenotypeForm extends JPanel {
             if (data.getSuperPhenotype() != null)
                 superPhenotypeField.setText(data.getSuperPhenotype());
             if (data.getRestriction() != null)
-                restrictionField.setText(data.getRestriction().toString());
+                rangeField.setData(data.getRestriction().asDecimalRangeLimited());
         }
 
         toggleFields();
@@ -105,6 +122,7 @@ public class PhenotypeForm extends JPanel {
         data.setId(idField.getText());
         data.setMainTitle(mainTitleField.getText());
         data.setSuperCategories(Arrays.asList(superCategoriesField.getText().split(";")));
+        data.setSuperPhenotype(superPhenotypeField.getText());
         data.setTitles(titlesField.getData());
         data.setSynonyms(synonymsField.getData());
         data.setDescriptions(descriptionsField.getData());
@@ -114,7 +132,8 @@ public class PhenotypeForm extends JPanel {
         data.setUcum(ucumField.getText());
         data.setFormula(formulaField.getText());
         if (scoreField.getValue() != null) data.setScore(new BigDecimal(scoreField.getText().replace(",", ".")));
-        // TODO: restriction
+        data.setRestriction(rangeField.getData());
+        data.setNegated(negatedCheckBox.isSelected());
         return data;
     }
 
@@ -141,7 +160,10 @@ public class PhenotypeForm extends JPanel {
             return true;
         if (formulaField.getText() != null ? !formulaField.getText().equals(data.getFormula()) : data.getFormula() != null)
             return true;
-        // TODO: restriction
+        if (rangeField.getData() != null ? !rangeField.getData().equals(data.getRestriction()) : data.getRestriction() != null)
+            return true;
+        if (negatedCheckBox.isSelected() != data.getNegated())
+            return true;
         return false;
     }
 
@@ -150,8 +172,8 @@ public class PhenotypeForm extends JPanel {
     }
 
     private void toggleFields() {
-        restrictionLabel.setVisible(type.hasRestriction());
-        restrictionField.setVisible(type.hasRestriction());
+        rangeLabel.setVisible(type.hasRestriction());
+        rangeField.setVisible(type.hasRestriction());
         superPhenotypeLabel.setVisible(type.isRestrictedPhenotype());
         superPhenotypeField.setVisible(type.isRestrictedPhenotype());
         scoreLabel.setVisible(type.isRestrictedPhenotype());
@@ -166,9 +188,15 @@ public class PhenotypeForm extends JPanel {
         ucumField.setVisible(type.equals(EntityType.ABSTRACT_SINGLE_PHENOTYPE));
         codesLabel.setVisible(!type.equals(EntityType.CATEGORY));
         codesField.setVisible(!type.equals(EntityType.CATEGORY));
+        negatedLabel.setVisible(type.isRestrictedPhenotype());
+        negatedCheckBox.setVisible(type.isRestrictedPhenotype());
+        metadataCollapsiblePane.setCollapsed(true);
+        showAdditionalMetadataButton.setText("Show additional metadata");
     }
 
     private void createUIComponents() {
         datatypeField = new JComboBox<>(new OWL2DatatypeComboBoxModel());
+        metadataCollapsiblePane = new JXCollapsiblePane();
+        showAdditionalMetadataButton = new JButton(metadataCollapsiblePane.getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION));
     }
 }

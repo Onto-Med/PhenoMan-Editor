@@ -174,6 +174,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         tree = new PhenotypeTree(this);
         tree.setModel(new DefaultTreeModel(null));
         tree.setShowsRootHandles(true);
+        phenotypeForm = new PhenotypeForm(this);
     }
 
     private void reloadEntityTree() {
@@ -184,7 +185,11 @@ public class PhenoManEditor extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        Entity entity = (Entity) ((DefaultMutableTreeNode) ae.getSource()).getUserObject();
+        Entity entity = null;
+
+        if (ae.getSource() instanceof DefaultMutableTreeNode) {
+            entity = (Entity) ((DefaultMutableTreeNode) ae.getSource()).getUserObject();
+        }
 
         PhenotypeBean phenotype;
         switch (ae.getActionCommand()) {
@@ -193,26 +198,31 @@ public class PhenoManEditor extends JFrame implements ActionListener {
                 phenotype = new PhenotypeBean(entity);
                 break;
             case "add_category":
+                if (entity == null) return;
                 phenotype = new PhenotypeBean();
                 phenotype.setType(EntityType.CATEGORY);
-                phenotype.setSuperCategories(Collections.singletonList(entity != null ? entity.asCategory().getName() : "Phenotype_Category")); // this is dirty and should be replaced by a variable access to COP class
+                phenotype.setSuperCategories(Collections.singletonList(entity.asCategory().getName())); // this is dirty and should be replaced by a variable access to COP class
                 break;
             case "add_abstract_single_phenotype":
+                if (entity == null) return;
                 phenotype = new PhenotypeBean();
                 phenotype.setType(EntityType.ABSTRACT_SINGLE_PHENOTYPE);
-                phenotype.setSuperCategories(Collections.singletonList(entity != null ? entity.asCategory().getName() : "Phenotype_Category"));
+                phenotype.setSuperCategories(Collections.singletonList(entity.asCategory().getName()));
                 break;
             case "add_abstract_calculation_phenotype":
+                if (entity == null) return;
                 phenotype = new PhenotypeBean();
                 phenotype.setType(EntityType.ABSTRACT_CALCULATION_PHENOTYPE);
-                phenotype.setSuperCategories(Collections.singletonList(entity != null ? entity.asCategory().getName() : "Phenotype_Category"));
+                phenotype.setSuperCategories(Collections.singletonList(entity.asCategory().getName()));
                 break;
             case "add_abstract_boolean_phenotype":
+                if (entity == null) return;
                 phenotype = new PhenotypeBean();
                 phenotype.setType(EntityType.ABSTRACT_BOOLEAN_PHENOTYPE);
-                phenotype.setSuperCategories(Collections.singletonList(entity != null ? entity.asCategory().getName() : "Phenotype_Category"));
+                phenotype.setSuperCategories(Collections.singletonList(entity.asCategory().getName()));
                 break;
             case "add_restricted_phenotype":
+                if (entity == null) return;
                 phenotype = new PhenotypeBean();
                 if (entity.isAbstractSinglePhenotype()) {
                     phenotype.setType(EntityType.RESTRICTED_SINGLE_PHENOTYPE);
@@ -224,10 +234,12 @@ public class PhenoManEditor extends JFrame implements ActionListener {
                 phenotype.setSuperPhenotype(entity.getName());
                 break;
             case "delete":
+                if (entity == null) return;
                 model.removeEntities(entity.getName());
                 model.write();
                 reloadEntityTree();
-                return;
+            case "phenotype_saved":
+                reloadEntityTree();
             default: return;
         }
 
