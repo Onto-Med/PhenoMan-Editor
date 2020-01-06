@@ -93,6 +93,7 @@ public class PhenotypeForm extends JPanel {
         synonymsField.setData(data.getSynonyms());
         descriptionsField.setData(data.getDescriptions());
         relationsField.setData(data.getRelations());
+        negatedCheckBox.setSelected(data.getNegated() != null ? data.getNegated() : false);
 
         if (data.getSuperCategories() != null)
             superCategoriesField.setText(String.join("; ", data.getSuperCategories()));

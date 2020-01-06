@@ -75,8 +75,10 @@ public class PhenotypeBean {
 
 		if (!entity.isCategory() && !entity.isAbstractPhenotype()) { // is restricted phenotype
 			score = ((RestrictedPhenotype) entity).getScore();
-            if (entity.isRangePhenotype())
-                restriction = entity.asRangePhenotype().getPhenotypeRange();
+            if (entity.isRangePhenotype()) {
+				restriction = entity.asRangePhenotype().getPhenotypeRange();
+				negated = entity.asRangePhenotype().isNegated();
+			}
             if (entity.isRestrictedBooleanPhenotype()) {
             	formula = entity.asRestrictedBooleanPhenotype().getFormula();
 			}
