@@ -110,6 +110,7 @@ public class PhenotypeBean {
 			addMetadata(phenotype);
 			model.addAbstractBooleanPhenotype(phenotype);
 		} else if (type.equals(EntityType.ABSTRACT_CALCULATION_PHENOTYPE)) {
+        	// TODO: restrictions are lost because they are tied to the abstract phenotype
 			AbstractCalculationPhenotype phenotype;
 			switch (datatype) {
 				case XSD_DECIMAL: phenotype = new AbstractCalculationDecimalPhenotype(id, mainTitle, model.getFormula(formula)); break;
