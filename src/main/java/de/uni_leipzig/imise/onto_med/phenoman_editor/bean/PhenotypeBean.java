@@ -93,7 +93,7 @@ public class PhenotypeBean {
         	category.setSuperCategories(superCategories.toArray(String[]::new));
         	addMetadata(category);
 			model.addCategory(category);
-		} else if (type.isAbstractPhenotype()) {
+		} else if (type.equals(EntityType.ABSTRACT_SINGLE_PHENOTYPE)) {
             AbstractSinglePhenotype phenotype;
             switch (datatype) {
 				case XSD_DECIMAL: phenotype = new AbstractSingleDecimalPhenotype(id, mainTitle); break;
@@ -105,7 +105,22 @@ public class PhenotypeBean {
             addMetadata(phenotype);
             phenotype.setUnit(ucum);
             model.addAbstractSinglePhenotype(phenotype);
-        } else if (type.isRestrictedPhenotype()) {
+        } else if (type.equals(EntityType.ABSTRACT_BOOLEAN_PHENOTYPE)) {
+			AbstractBooleanPhenotype phenotype = new AbstractBooleanPhenotype(id, mainTitle, superCategories.toArray(String[]::new));
+			addMetadata(phenotype);
+			model.addAbstractBooleanPhenotype(phenotype);
+		} else if (type.equals(EntityType.ABSTRACT_CALCULATION_PHENOTYPE)) {
+			AbstractCalculationPhenotype phenotype;
+			switch (datatype) {
+				case XSD_DECIMAL: phenotype = new AbstractCalculationDecimalPhenotype(id, mainTitle, model.getFormula(formula)); break;
+				case XSD_STRING: phenotype = new AbstractCalculationBooleanPhenotype(id, mainTitle, model.getFormula(formula)); break;
+				case XSD_DATE_TIME: phenotype = new AbstractCalculationDatePhenotype(id, mainTitle, model.getFormula(formula)); break;
+				default: throw new IllegalArgumentException(datatype.getShortForm() + " is not supported.");
+			}
+			phenotype.setCategories(superCategories.toArray(String[]::new));
+			addMetadata(phenotype);
+			model.addAbstractCalculationPhenotype(phenotype);
+		} else if (type.isRestrictedPhenotype()) {
         	Phenotype abstractPhenotype = model.getPhenotype(superPhenotype);
 			if (abstractPhenotype == null) {
 				throw new IllegalArgumentException("super phenotype is missing");
