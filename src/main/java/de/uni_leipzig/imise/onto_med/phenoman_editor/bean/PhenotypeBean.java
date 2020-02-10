@@ -86,11 +86,11 @@ public class PhenotypeBean {
 	}
 
 	public void addToModel(PhenotypeManager model) throws WrongPhenotypeTypeException, IllegalArgumentException {
-		if (id == null || id.isBlank())	id = UUID.randomUUID().toString();
+		if (id == null || id.isEmpty())	id = UUID.randomUUID().toString();
 
         if (type.equals(EntityType.CATEGORY)) {
         	Category category = new Category(id, mainTitle);
-        	category.setSuperCategories(superCategories.toArray(String[]::new));
+        	category.setSuperCategories(superCategories.toArray(new String[0]));
         	addMetadata(category);
 			model.addCategory(category);
 		} else if (type.equals(EntityType.ABSTRACT_SINGLE_PHENOTYPE)) {
@@ -101,12 +101,12 @@ public class PhenotypeBean {
                 case XSD_DATE_TIME: phenotype = new AbstractSingleDatePhenotype(id, mainTitle); break;
                 default: throw new IllegalArgumentException(datatype.getShortForm() + " is not supported.");
             }
-            phenotype.setCategories(superCategories.toArray(String[]::new));
+            phenotype.setCategories(superCategories.toArray(new String[0]));
             addMetadata(phenotype);
             phenotype.addUnit(ucum);
             model.addAbstractSinglePhenotype(phenotype);
         } else if (type.equals(EntityType.ABSTRACT_BOOLEAN_PHENOTYPE)) {
-			AbstractBooleanPhenotype phenotype = new AbstractBooleanPhenotype(id, mainTitle, superCategories.toArray(String[]::new));
+			AbstractBooleanPhenotype phenotype = new AbstractBooleanPhenotype(id, mainTitle, superCategories.toArray(new String[0]));
 			addMetadata(phenotype);
 			model.addAbstractBooleanPhenotype(phenotype);
 		} else if (type.equals(EntityType.ABSTRACT_CALCULATION_PHENOTYPE)) {
@@ -118,7 +118,7 @@ public class PhenotypeBean {
 				case XSD_DATE_TIME: phenotype = new AbstractCalculationDatePhenotype(id, mainTitle, model.getFormula(formula)); break;
 				default: throw new IllegalArgumentException(datatype.getShortForm() + " is not supported.");
 			}
-			phenotype.setCategories(superCategories.toArray(String[]::new));
+			phenotype.setCategories(superCategories.toArray(new String[0]));
 			addMetadata(phenotype);
 			model.addAbstractCalculationPhenotype(phenotype);
 		} else if (type.isRestrictedPhenotype()) {

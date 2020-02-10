@@ -9,6 +9,7 @@ import jiconfont.swing.IconFontSwing;
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,7 +32,8 @@ public class LocalizedStringField extends JPanel {
     }
 
     public void setData(List<LocalizedString> data) {
-        model.setRows(Objects.requireNonNullElseGet(data, ArrayList::new));
+        if (data != null) model.setRows(data);
+        else model.setRows(new ArrayList<>());
     }
 
     public List<LocalizedString> getData() {

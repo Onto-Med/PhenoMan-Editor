@@ -74,12 +74,8 @@ public class PhenotypeForm extends JPanel {
                 );
             }
         });
-        showAdditionalMetadataButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                showAdditionalMetadataButton.setText((!metadataCollapsiblePane.isCollapsed() ? "Show" : "Hide") + " additional metadata");
-            }
-        });
+        showAdditionalMetadataButton.addActionListener(actionEvent ->
+                showAdditionalMetadataButton.setText((!metadataCollapsiblePane.isCollapsed() ? "Show" : "Hide") + " additional metadata"));
     }
 
     public void setModel(PhenotypeManager model) {

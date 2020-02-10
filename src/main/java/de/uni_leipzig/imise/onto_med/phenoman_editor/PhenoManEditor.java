@@ -71,7 +71,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
 
 		loadOntologyButton.addActionListener(actionEvent -> {
 			String path = ontologyPath.getText();
-			if (path.isBlank()) return;
+			if (path.isEmpty()) return;
 
 			doInBackground("Loading ontology...", () -> {
 			    model = null;
@@ -99,7 +99,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
             @Override
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyCode() != KeyEvent.VK_ENTER) return;
-                if (treeSearchField.getText().isBlank()) return;
+                if (treeSearchField.getText().isEmpty()) return;
 
                 Object root = tree.getModel().getRoot();
                 if (root == null) return;
@@ -149,7 +149,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         dlgProgress.setSize(300, 60);
         dlgProgress.setLocationRelativeTo(null);
 
-        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
                 function.call();
