@@ -12,7 +12,7 @@
         <dependency>
             <groupId>org.smith</groupId>
             <artifactId>phenoman</artifactId>
-            <version>0.3.2</version>
+            <version>0.3.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.jiconfont</groupId>

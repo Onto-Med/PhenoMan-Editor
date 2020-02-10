@@ -179,7 +179,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
 
     private void reloadEntityTree() {
         if (model == null) return;
-        EntityTreeNode node = model.getEntityTree(true);
+        EntityTreeNode node = model.getEntityTreeWithPhenotypes(true);
         tree.setModel(new DefaultTreeModel(convertToTreeNode(node)));
     }
 

@@ -103,7 +103,7 @@ public class PhenotypeBean {
             }
             phenotype.setCategories(superCategories.toArray(String[]::new));
             addMetadata(phenotype);
-            phenotype.setUnit(ucum);
+            phenotype.addUnit(ucum);
             model.addAbstractSinglePhenotype(phenotype);
         } else if (type.equals(EntityType.ABSTRACT_BOOLEAN_PHENOTYPE)) {
 			AbstractBooleanPhenotype phenotype = new AbstractBooleanPhenotype(id, mainTitle, superCategories.toArray(String[]::new));
