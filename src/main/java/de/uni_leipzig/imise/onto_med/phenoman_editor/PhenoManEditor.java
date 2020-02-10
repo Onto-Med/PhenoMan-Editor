@@ -169,8 +169,8 @@ public class PhenoManEditor extends JFrame implements ActionListener {
 
     private void createUIComponents() {
         ClassLoader classLoader = PhenoManEditor.class.getClassLoader();
-        copImage = new JLabel(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/COP.png")).getPath()));
-        exampleImage = new JLabel(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/Example_BSA.png")).getPath()));
+        copImage = new JLabel(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/COP.png"))));
+        exampleImage = new JLabel(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/Example_BSA.png"))));
         tree = new PhenotypeTree(this);
         tree.setModel(new DefaultTreeModel(null));
         tree.setShowsRootHandles(true);
