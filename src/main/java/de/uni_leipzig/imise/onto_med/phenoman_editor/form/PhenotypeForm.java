@@ -52,6 +52,7 @@ public class PhenotypeForm extends JPanel {
     private JLabel negatedLabel;
     private JXCollapsiblePane metadataCollapsiblePane;
     private JButton showAdditionalMetadataButton;
+    private JScrollPane formulaScrollPane;
     private EntityType type;
     private ActionListener listener;
 
@@ -183,6 +184,7 @@ public class PhenotypeForm extends JPanel {
         superCategoriesField.setVisible(type.isAbstractPhenotype());
         datatypeLabel.setVisible(type.hasDatatype());
         datatypeField.setVisible(type.hasDatatype());
+        formulaScrollPane.setVisible(type.hasFormula());
         formulaLabel.setVisible(type.hasFormula());
         formulaField.setVisible(type.hasFormula());
         ucumLabel.setVisible(type.equals(EntityType.ABSTRACT_SINGLE_PHENOTYPE));

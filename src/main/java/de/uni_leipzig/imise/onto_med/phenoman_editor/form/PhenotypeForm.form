@@ -66,23 +66,11 @@
           <text value=""/>
         </properties>
       </component>
-      <component id="fb056" class="javax.swing.JTextArea" binding="formulaField">
-        <constraints>
-          <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="50"/>
-          </grid>
-        </constraints>
-        <properties>
-          <lineWrap value="true"/>
-          <wrapStyleWord value="true"/>
-        </properties>
-      </component>
       <component id="418f5" class="javax.swing.JLabel" binding="formulaLabel">
         <constraints>
           <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <labelFor value="fb056"/>
           <text value="Formula:"/>
         </properties>
       </component>
@@ -289,6 +277,25 @@
           <text value="Show additional metadata"/>
         </properties>
       </component>
+      <scrollpane id="f316e" binding="formulaScrollPane">
+        <constraints>
+          <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="500" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="260d0" class="javax.swing.JTextArea" binding="formulaField">
+            <constraints/>
+            <properties>
+              <lineWrap value="true"/>
+              <rows value="3"/>
+              <wrapStyleWord value="true"/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
     </children>
   </grid>
 </form>
