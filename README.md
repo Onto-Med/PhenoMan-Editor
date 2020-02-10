@@ -6,6 +6,8 @@ Phenotype Algorithm Specification Ontologies (PASO), which can further on be use
 individual subject data. PASOs are based on the **Core Ontology of Phenotypes**.
 
 ## How to use
+A Java 8 Runtime Environment (or higher) is required to start the PhenoMan-Editor.
+
 1. Download a release from the [releases section](releases).
 2. Run the JAR file, which is contained in the release (replace "x.x.x" with the actual version number of the release):
    ```shell script
