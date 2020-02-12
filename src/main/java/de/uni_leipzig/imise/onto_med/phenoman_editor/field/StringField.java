@@ -7,7 +7,6 @@ import jiconfont.swing.IconFontSwing;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class StringField extends JPanel {
     private JPanel contentPane;

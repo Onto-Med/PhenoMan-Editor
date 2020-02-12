@@ -34,7 +34,7 @@ public class StringTableModel extends AbstractTableModel {
     }
 
     public String getColumnName(int column) {
-        return (column == 0) ? "String" : null;
+        return null;
     }
 
     public boolean isCellEditable(int row, int col) {
