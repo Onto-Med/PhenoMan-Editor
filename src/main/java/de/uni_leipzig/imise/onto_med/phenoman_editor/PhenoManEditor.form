@@ -132,7 +132,7 @@
                   </grid>
                 </constraints>
                 <properties>
-                  <text value="C:\Users\cbeger\Desktop\BMI.owl"/>
+                  <text value=""/>
                 </properties>
               </component>
               <component id="68127" class="javax.swing.JButton" binding="browseButton" default-binding="true">
