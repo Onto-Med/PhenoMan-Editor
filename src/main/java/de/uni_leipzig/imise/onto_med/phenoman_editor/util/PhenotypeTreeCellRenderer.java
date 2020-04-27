@@ -31,7 +31,7 @@ public class PhenotypeTreeCellRenderer extends DefaultTreeCellRenderer {
     }
 
     private void setLabelFromEntity(Entity entity) {
-        if (entity.getMainTitleText().isBlank()) {
+        if (entity.getMainTitleText().isEmpty()) {
             setText(entity.getName());
         } else {
             setText(entity.getMainTitleText());

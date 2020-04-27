@@ -28,7 +28,7 @@ public class StringField extends JPanel {
     }
 
     public void setData(List<String> data) {
-        model.setRows(Objects.requireNonNullElseGet(data, ArrayList::new));
+        model.setRows(data == null ? new ArrayList<>() : data);
     }
 
     public List<String> getData() {

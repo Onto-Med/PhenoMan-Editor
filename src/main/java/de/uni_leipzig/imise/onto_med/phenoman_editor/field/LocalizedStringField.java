@@ -31,7 +31,7 @@ public class LocalizedStringField extends JPanel {
     }
 
     public void setData(List<LocalizedString> data) {
-        model.setRows(Objects.requireNonNullElseGet(data, ArrayList::new));
+        model.setRows(data == null ? new ArrayList<>() : data);
     }
 
     public List<LocalizedString> getData() {
