@@ -15,9 +15,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class PhenotypeBean {
+	/**
+	 * Describes, which type the phenotype is of. (@Code{EntityType})
+	 * e.g. AbstractSinglePhenotype, RestrictedBooleanPhenotype, etc.
+	 */
 	private EntityType type;
 
+	/**
+	 * Unique identifier of the phenotype.
+	 * Equivalent to {@code Phenotype.name} field.
+	 */
 	private String id;
+
 	private String mainTitle;
 
 	private List<LocalizedString> titles       = new ArrayList<>();
@@ -28,15 +37,31 @@ public class PhenotypeBean {
 	private List<String> codes     = new ArrayList<>();
 
 	private List<String> superCategories = new ArrayList<>();
+
+	/**
+	 * OWL2Datatype of the {@code AbstractSinglePhenotype} or of the formula of the {@code AbstractCalculationPhenotype}.
+	 */
 	private OWL2Datatype datatype;
 
 	private List<String> units = new ArrayList<>();
 	private BigDecimal   score;
-	private String       superPhenotype;
-	private Boolean      negated;
 
+	/**
+	 * The {@code AbstractPhenotype} a {@code RestrictedPhenotype} is related to.
+	 */
+	private String superPhenotype;
+
+	/**
+	 * Specifies if the phenotype is negated.
+	 */
+	private Boolean negated;
+
+	// TODO: what is this field for?
 	private String oid;
 
+	/**
+	 * The formula of a {@code RestrictedBooleanPhenotype} or {@code AbstractCalculationPhenotype}.
+	 */
 	private String formula;
 
 	private DataRange restriction;
@@ -48,6 +73,7 @@ public class PhenotypeBean {
 	public PhenotypeBean(Entity entity) {
 		this();
 		type = EntityType.getEntityType(entity);
+
 		if (entity.isCategory()) {
 			superCategories = entity.asCategory().getSuperCategoriesOrEmptyList();
 		} else if (entity.isAbstractPhenotype()) {
