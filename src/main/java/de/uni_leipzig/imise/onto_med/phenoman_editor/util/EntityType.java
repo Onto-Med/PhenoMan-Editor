@@ -4,7 +4,7 @@ import org.smith.phenoman.model.phenotype.top_level.Entity;
 
 public enum EntityType {
     CATEGORY("Category"),
-    ABSTRACT_SINGLE_PHENOTYPE("Abstract Phenotype"),
+    ABSTRACT_SINGLE_PHENOTYPE("Abstract Single Phenotype"),
     ABSTRACT_CALCULATION_PHENOTYPE("Abstract Calculation Phenotype"),
     ABSTRACT_BOOLEAN_PHENOTYPE("Abstract Boolean Phenotype"),
     RESTRICTED_SINGLE_PHENOTYPE("Restricted Single Phenotype"),
