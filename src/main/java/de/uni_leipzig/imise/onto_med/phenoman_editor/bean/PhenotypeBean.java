@@ -27,15 +27,15 @@ public class PhenotypeBean {
 	 */
 	private String id;
 
+	private String oid;
 	private String mainTitle;
 
 	private List<LocalizedString> titles       = new ArrayList<>();
 	private List<LocalizedString> synonyms     = new ArrayList<>();
 	private List<LocalizedString> descriptions = new ArrayList<>();
 
-	private List<String> relations = new ArrayList<>();
-	private List<String> codes     = new ArrayList<>();
-
+	private List<String> relations       = new ArrayList<>();
+	private List<String> codes           = new ArrayList<>();
 	private List<String> superCategories = new ArrayList<>();
 
 	/**
@@ -56,15 +56,13 @@ public class PhenotypeBean {
 	 */
 	private Boolean negated;
 
-	// TODO: what is this field for?
-	private String oid;
-
 	/**
 	 * The formula of a {@code RestrictedBooleanPhenotype} or {@code AbstractCalculationPhenotype}.
 	 */
 	private String formula;
 
 	private DataRange restriction;
+	private Boolean mainResult;
 
 
 	public PhenotypeBean() {
@@ -75,43 +73,11 @@ public class PhenotypeBean {
 		type = EntityType.getEntityType(entity);
 
 		if (entity.isCategory()) {
-			superCategories = entity.asCategory().getSuperCategoriesOrEmptyList();
+			populateWithCategoryAttributes(entity.asCategory());
 		} else if (entity.isAbstractPhenotype()) {
-			superCategories = Arrays.asList(entity.asAbstractPhenotype().getCategories());
-		} else {
-			superPhenotype = ((RestrictedPhenotype) entity).getAbstractPhenotypeName();
-		}
-		id        = entity.getName();
-		mainTitle = entity.getMainTitleText();
-
-		titles       = titleMapToLocalizedStringList(entity.getTitles());
-		synonyms     = stringMapToLocalizedStringList(entity.getLabels());
-		descriptions = stringMapToLocalizedStringList(entity.getDescriptions());
-
-		relations = new ArrayList<>(entity.getRelatedConcepts());
-		codes     = entity.getCodes().stream().map(Code::getCodeUri).collect(Collectors.toList());
-
-		if (entity.isAbstractSinglePhenotype()) datatype = entity.asAbstractSinglePhenotype().getDatatype();
-
-		if (entity.isAbstractCalculationPhenotype()) {
-			datatype = entity.asAbstractCalculationPhenotype().getDatatype();
-			formula  = entity.asAbstractCalculationPhenotype().getFormula();
-			units    = entity.asAbstractCalculationPhenotype().getUnits();
-		}
-
-		if (entity.isAbstractSinglePhenotype()) {
-			units = entity.asAbstractSinglePhenotype().getUnits();
-		}
-
-		if (!entity.isCategory() && !entity.isAbstractPhenotype()) { // is restricted phenotype
-			score = ((RestrictedPhenotype) entity).getScore();
-			if (entity.isRangePhenotype()) {
-				restriction = entity.asRangePhenotype().getPhenotypeRange();
-				negated     = entity.asRangePhenotype().isNegated();
-			}
-			if (entity.isRestrictedBooleanPhenotype()) {
-				formula = entity.asRestrictedBooleanPhenotype().getFormula();
-			}
+			populateWithAbstractAttributes(entity.asAbstractPhenotype());
+		} else if (entity.isRestrictedPhenotype()) {
+			populateWithResctrictedAttributes(entity.asRestrictedPhenotype());
 		}
 	}
 
@@ -183,6 +149,95 @@ public class PhenotypeBean {
 			}
 		}
 		model.write();
+	}
+
+	private void populateWithCategoryAttributes(Category entity) {
+		populateWithBasicMetadata(entity);
+		superCategories = entity.getSuperCategoriesOrEmptyList();
+	}
+
+	private void populateWithAbstractAttributes(AbstractPhenotype entity) {
+		populateWithBasicMetadata(entity);
+		superCategories = Arrays.asList(entity.getCategories());
+
+		if (entity.isAbstractSinglePhenotype()) {
+			populateWithAbstractSingleAttributes(entity.asAbstractSinglePhenotype());
+		} else if (entity.isAbstractCalculationPhenotype()) {
+			populateWithAbstractCalculationAttributes(entity.asAbstractCalculationPhenotype());
+		} else if (entity.isAbstractBooleanPhenotype()) {
+			populateWithAbstractBooleanAttributes(entity.asAbstractBooleanPhenotype());
+		}
+	}
+
+	private void populateWithAbstractSingleAttributes(AbstractSinglePhenotype entity) {
+		units    = entity.asAbstractSinglePhenotype().getUnits();
+		datatype = entity.getDatatype();
+
+		/*
+		 TODO:
+		   * Function function
+		   * ResourceType resourceType
+		   * TimePeriod validityPeriod
+		   * EligibilityCriterion eligibilityCriterion
+		   * String artDecorDatatype
+		 */
+	}
+
+	private void populateWithAbstractCalculationAttributes(AbstractCalculationPhenotype entity) {
+		units      = entity.asAbstractCalculationPhenotype().getUnits();
+		datatype   = entity.getDatatype();
+		formula    = entity.getFormula();
+		mainResult = entity.isMainResult();
+
+		// TODO: BigDecimal value
+	}
+
+	private void populateWithAbstractBooleanAttributes(AbstractBooleanPhenotype entity) {
+		mainResult = entity.isMainResult();
+	}
+
+	private void populateWithResctrictedAttributes(RestrictedPhenotype entity) {
+		populateWithBasicMetadata(entity);
+
+		superPhenotype = entity.getAbstractPhenotypeName();
+		score          = entity.getScore();
+
+		if (entity.isRestrictedSinglePhenotype()) {
+			populateWithRestrictedSingleAttributes(entity.asRestrictedSinglePhenotype());
+		} else if (entity.isRestrictedCalculationPhenotype()) {
+			populateWithRestrictedCalculationAttributes(entity.asRestrictedCalculationPhenotype());
+		} else if (entity.isRestrictedBooleanPhenotype()) {
+			populateWithRestrictedBooleanAttributes(entity.asRestrictedBooleanPhenotype());
+		}
+	}
+
+	private void populateWithRestrictedSingleAttributes(RestrictedSinglePhenotype entity) {
+		datatype    = entity.getDatatype();
+		restriction = entity.getPhenotypeRange();
+		negated     = entity.isNegated();
+		// TODO: some/all (for PhenotypeRange)
+	}
+
+	private void populateWithRestrictedCalculationAttributes(RestrictedCalculationPhenotype entity) {
+		datatype    = entity.getDatatype();
+		restriction = entity.getPhenotypeRange();
+		negated     = entity.isNegated();
+	}
+
+	private void populateWithRestrictedBooleanAttributes(RestrictedBooleanPhenotype entity) {
+		formula    = entity.getManchesterSyntaxExpression();
+		mainResult = entity.isMainResult();
+	}
+
+	private void populateWithBasicMetadata(Entity entity) {
+		id           = entity.getName();
+		oid          = entity.getOID();
+		mainTitle    = entity.getMainTitleText();
+		titles       = titleMapToLocalizedStringList(entity.getTitles());
+		synonyms     = stringMapToLocalizedStringList(entity.getLabels());
+		descriptions = stringMapToLocalizedStringList(entity.getDescriptions());
+		codes        = entity.getCodes().stream().map(Code::getCodeUri).collect(Collectors.toList());
+		relations    = new ArrayList<>(entity.getRelatedConcepts());
 	}
 
 	public EntityType getType() {
