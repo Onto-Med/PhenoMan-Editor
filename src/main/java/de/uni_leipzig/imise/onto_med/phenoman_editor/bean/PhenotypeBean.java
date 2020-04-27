@@ -73,11 +73,11 @@ public class PhenotypeBean {
 		type = EntityType.getEntityType(entity);
 
 		if (entity.isCategory()) {
-			populateWithCategoryAttributes(entity.asCategory());
+			loadCategoryAttributes(entity.asCategory());
 		} else if (entity.isAbstractPhenotype()) {
-			populateWithAbstractAttributes(entity.asAbstractPhenotype());
+			loadAbstractAttributes(entity.asAbstractPhenotype());
 		} else if (entity.isRestrictedPhenotype()) {
-			populateWithResctrictedAttributes(entity.asRestrictedPhenotype());
+			loadResctrictedAttributes(entity.asRestrictedPhenotype());
 		}
 	}
 
@@ -151,25 +151,25 @@ public class PhenotypeBean {
 		model.write();
 	}
 
-	private void populateWithCategoryAttributes(Category entity) {
-		populateWithBasicMetadata(entity);
+	private void loadCategoryAttributes(Category entity) {
+		loadBasicMetadata(entity);
 		superCategories = entity.getSuperCategoriesOrEmptyList();
 	}
 
-	private void populateWithAbstractAttributes(AbstractPhenotype entity) {
-		populateWithBasicMetadata(entity);
+	private void loadAbstractAttributes(AbstractPhenotype entity) {
+		loadBasicMetadata(entity);
 		superCategories = Arrays.asList(entity.getCategories());
 
 		if (entity.isAbstractSinglePhenotype()) {
-			populateWithAbstractSingleAttributes(entity.asAbstractSinglePhenotype());
+			loadAbstractSingleAttributes(entity.asAbstractSinglePhenotype());
 		} else if (entity.isAbstractCalculationPhenotype()) {
-			populateWithAbstractCalculationAttributes(entity.asAbstractCalculationPhenotype());
+			loadAbstractCalculationAttributes(entity.asAbstractCalculationPhenotype());
 		} else if (entity.isAbstractBooleanPhenotype()) {
-			populateWithAbstractBooleanAttributes(entity.asAbstractBooleanPhenotype());
+			loadAbstractBooleanAttributes(entity.asAbstractBooleanPhenotype());
 		}
 	}
 
-	private void populateWithAbstractSingleAttributes(AbstractSinglePhenotype entity) {
+	private void loadAbstractSingleAttributes(AbstractSinglePhenotype entity) {
 		units    = entity.asAbstractSinglePhenotype().getUnits();
 		datatype = entity.getDatatype();
 
@@ -183,7 +183,7 @@ public class PhenotypeBean {
 		 */
 	}
 
-	private void populateWithAbstractCalculationAttributes(AbstractCalculationPhenotype entity) {
+	private void loadAbstractCalculationAttributes(AbstractCalculationPhenotype entity) {
 		units      = entity.asAbstractCalculationPhenotype().getUnits();
 		datatype   = entity.getDatatype();
 		formula    = entity.getFormula();
@@ -192,44 +192,44 @@ public class PhenotypeBean {
 		// TODO: BigDecimal value
 	}
 
-	private void populateWithAbstractBooleanAttributes(AbstractBooleanPhenotype entity) {
+	private void loadAbstractBooleanAttributes(AbstractBooleanPhenotype entity) {
 		mainResult = entity.isMainResult();
 	}
 
-	private void populateWithResctrictedAttributes(RestrictedPhenotype entity) {
-		populateWithBasicMetadata(entity);
+	private void loadResctrictedAttributes(RestrictedPhenotype entity) {
+		loadBasicMetadata(entity);
 
 		superPhenotype = entity.getAbstractPhenotypeName();
 		score          = entity.getScore();
 
 		if (entity.isRestrictedSinglePhenotype()) {
-			populateWithRestrictedSingleAttributes(entity.asRestrictedSinglePhenotype());
+			loadRestrictedSingleAttributes(entity.asRestrictedSinglePhenotype());
 		} else if (entity.isRestrictedCalculationPhenotype()) {
-			populateWithRestrictedCalculationAttributes(entity.asRestrictedCalculationPhenotype());
+			loadRestrictedCalculationAttributes(entity.asRestrictedCalculationPhenotype());
 		} else if (entity.isRestrictedBooleanPhenotype()) {
-			populateWithRestrictedBooleanAttributes(entity.asRestrictedBooleanPhenotype());
+			loadRestrictedBooleanAttributes(entity.asRestrictedBooleanPhenotype());
 		}
 	}
 
-	private void populateWithRestrictedSingleAttributes(RestrictedSinglePhenotype entity) {
+	private void loadRestrictedSingleAttributes(RestrictedSinglePhenotype entity) {
 		datatype    = entity.getDatatype();
 		restriction = entity.getPhenotypeRange();
 		negated     = entity.isNegated();
 		// TODO: some/all (for PhenotypeRange)
 	}
 
-	private void populateWithRestrictedCalculationAttributes(RestrictedCalculationPhenotype entity) {
+	private void loadRestrictedCalculationAttributes(RestrictedCalculationPhenotype entity) {
 		datatype    = entity.getDatatype();
 		restriction = entity.getPhenotypeRange();
 		negated     = entity.isNegated();
 	}
 
-	private void populateWithRestrictedBooleanAttributes(RestrictedBooleanPhenotype entity) {
+	private void loadRestrictedBooleanAttributes(RestrictedBooleanPhenotype entity) {
 		formula    = entity.getManchesterSyntaxExpression();
 		mainResult = entity.isMainResult();
 	}
 
-	private void populateWithBasicMetadata(Entity entity) {
+	private void loadBasicMetadata(Entity entity) {
 		id           = entity.getName();
 		oid          = entity.getOID();
 		mainTitle    = entity.getMainTitleText();
