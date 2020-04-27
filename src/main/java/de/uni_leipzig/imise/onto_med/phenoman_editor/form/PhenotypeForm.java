@@ -5,12 +5,12 @@ import de.uni_leipzig.imise.onto_med.phenoman_editor.field.DataRangeField;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.field.LocalizedStringField;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.field.StringField;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.model.OWL2DatatypeComboBoxModel;
+import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeManagerMapper;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
-import org.smith.phenoman.man.PhenotypeManager;
 
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
@@ -22,7 +22,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 
 public class PhenotypeForm extends JPanel {
-    private PhenotypeManager model;
+    private PhenotypeManagerMapper mapper;
 
     private JTextField idField;
     private JPanel contentPane;
@@ -31,8 +31,8 @@ public class PhenotypeForm extends JPanel {
     private LocalizedStringField titlesField;
     private JTextField mainTitleField;
     private LocalizedStringField synonymsField;
-    private JTextField ucumField;
-    private JLabel superPhenotypeField;
+    private JTextField           unitsField;
+    private JLabel               superPhenotypeField;
     private JTextArea formulaField;
     private JFormattedTextField scoreField;
     private StringField relationsField;
@@ -53,18 +53,15 @@ public class PhenotypeForm extends JPanel {
     private JXCollapsiblePane metadataCollapsiblePane;
     private JButton showAdditionalMetadataButton;
     private EntityType type;
-    private ActionListener listener;
 
     public PhenotypeForm(ActionListener listener) {
-        this.listener = listener;
         scoreField.setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(new DecimalFormat("###0.00"))));
         IconFontSwing.register(FontAwesome.getIconFont());
         saveButton.setIcon(IconFontSwing.buildIcon(FontAwesome.FLOPPY_O, 12));
         saveButton.addActionListener(actionEvent -> {
-            if (model == null) return;
-
+            if (mapper == null || !mapper.hasModel()) return;
             try {
-                getData(new PhenotypeBean()).addToModel(model);
+                mapper.writeToOntology(mapper.buildEntity(getData(new PhenotypeBean())));
                 listener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "phenotype_saved"));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -73,16 +70,13 @@ public class PhenotypeForm extends JPanel {
                 );
             }
         });
-        showAdditionalMetadataButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                showAdditionalMetadataButton.setText((!metadataCollapsiblePane.isCollapsed() ? "Show" : "Hide") + " additional metadata");
-            }
-        });
+        showAdditionalMetadataButton.addActionListener(actionEvent ->
+            showAdditionalMetadataButton.setText((!metadataCollapsiblePane.isCollapsed() ? "Show" : "Hide") + " additional metadata")
+        );
     }
 
-    public void setModel(PhenotypeManager model) {
-        this.model = model;
+    public void setMapper(PhenotypeManagerMapper mapper) {
+        this.mapper = mapper;
     }
 
     public void setData(PhenotypeBean data) {
@@ -99,7 +93,7 @@ public class PhenotypeForm extends JPanel {
             superCategoriesField.setText(String.join("; ", data.getSuperCategories()));
 
         if (type.isAbstractPhenotype()) {
-            ucumField.setText(data.getUcum());
+            unitsField.setText(String.join(";", data.getUnits()));
             codesField.setData(data.getCodes());
         }
 
@@ -122,7 +116,8 @@ public class PhenotypeForm extends JPanel {
         data.setType(type);
         data.setId(idField.getText());
         data.setMainTitle(mainTitleField.getText());
-        data.setSuperCategories(Arrays.asList(superCategoriesField.getText().split(";")));
+        if (!superCategoriesField.getText().isEmpty())
+            data.setSuperCategories(Arrays.asList(superCategoriesField.getText().split(";")));
         data.setSuperPhenotype(superPhenotypeField.getText());
         data.setTitles(titlesField.getData());
         data.setSynonyms(synonymsField.getData());
@@ -130,7 +125,8 @@ public class PhenotypeForm extends JPanel {
         data.setRelations(relationsField.getData());
         data.setCodes(codesField.getData());
         data.setDatatype((OWL2Datatype) datatypeField.getSelectedItem());
-        data.setUcum(ucumField.getText());
+        if (!unitsField.getText().isEmpty())
+            data.setUnits(Arrays.asList(unitsField.getText().split(";")));
         data.setFormula(formulaField.getText());
         if (scoreField.getValue() != null) data.setScore(new BigDecimal(scoreField.getText().replace(",", ".")));
         data.setRestriction(rangeField.getData());
@@ -138,6 +134,7 @@ public class PhenotypeForm extends JPanel {
         return data;
     }
 
+    @SuppressWarnings("unused")
     public boolean isModified(PhenotypeBean data) {
         if (idField.getText() != null ? !idField.getText().equals(data.getId()) : data.getId() != null)
             return true;
@@ -155,7 +152,9 @@ public class PhenotypeForm extends JPanel {
             return true;
         if (datatypeField.getSelectedItem() != null ? !datatypeField.getSelectedItem().equals(data.getDatatype()) : data.getDatatype() != null)
             return true;
-        if (ucumField.getText() != null ? !ucumField.getText().equals(data.getUcum()) : data.getUcum() != null)
+        if (unitsField.getText() != null ? !unitsField.getText().equals(String.join(";", data.getUnits())) : data.getUnits() != null)
+            return true;
+        if (superCategoriesField.getText() != null ? !superCategoriesField.getText().equals(String.join(";", data.getSuperCategories())) : data.getSuperPhenotype() != null)
             return true;
         if (scoreField.getValue() != null ? !scoreField.getValue().equals(data.getScore()) : data.getScore() != null)
             return true;
@@ -186,7 +185,7 @@ public class PhenotypeForm extends JPanel {
         formulaLabel.setVisible(type.hasFormula());
         formulaField.setVisible(type.hasFormula());
         ucumLabel.setVisible(type.equals(EntityType.ABSTRACT_SINGLE_PHENOTYPE));
-        ucumField.setVisible(type.equals(EntityType.ABSTRACT_SINGLE_PHENOTYPE));
+        unitsField.setVisible(type.equals(EntityType.ABSTRACT_SINGLE_PHENOTYPE));
         codesLabel.setVisible(!type.equals(EntityType.CATEGORY));
         codesField.setVisible(!type.equals(EntityType.CATEGORY));
         negatedLabel.setVisible(type.isRestrictedPhenotype());

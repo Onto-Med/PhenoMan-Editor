@@ -2,6 +2,7 @@ package de.uni_leipzig.imise.onto_med.phenoman_editor;
 
 import de.uni_leipzig.imise.onto_med.phenoman_editor.bean.PhenotypeBean;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.form.PhenotypeForm;
+import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeManagerMapper;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeTree;
 import jiconfont.icons.font_awesome.FontAwesome;
@@ -25,18 +26,18 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 
 public class PhenoManEditor extends JFrame implements ActionListener {
-    private JTabbedPane tabbedPane;
-    private JPanel contentPane;
-    private JTextField ontologyPath;
-    private JButton browseButton;
-	private JButton loadOntologyButton;
-    private JButton reloadButton;
-    private PhenotypeForm phenotypeForm;
-    private PhenotypeTree tree;
-    private JTextField treeSearchField;
-    private JScrollPane phenotypeFormScrollPane;
-    private JScrollPane introductionScrollPane;
-    private PhenotypeManager model;
+    private JTabbedPane      tabbedPane;
+    private JPanel           contentPane;
+    private JTextField       ontologyPath;
+    private JButton          browseButton;
+    private JButton          loadOntologyButton;
+    private JButton          reloadButton;
+    private PhenotypeForm    phenotypeForm;
+    private PhenotypeTree    tree;
+    private JTextField       treeSearchField;
+    private JScrollPane      phenotypeFormScrollPane;
+    private JScrollPane      introductionScrollPane;
+    private PhenotypeManagerMapper mapper;
 
     @SuppressWarnings("unused")
     private JLabel copImage;
@@ -71,13 +72,13 @@ public class PhenoManEditor extends JFrame implements ActionListener {
 
 		loadOntologyButton.addActionListener(actionEvent -> {
 			String path = ontologyPath.getText();
-			if (path.isBlank()) return;
+			if (path.isEmpty()) return;
 
 			doInBackground("Loading ontology...", () -> {
-			    model = null;
+			    mapper.setModel(null);
 			    setTitle("PhenoMan-Editor");
 			    try {
-			        model = new PhenotypeManager(path, false);
+			        mapper.setModel(new PhenotypeManager(path, false));
 			    } catch (Exception e) {
 			        e.printStackTrace();
 			        JOptionPane.showMessageDialog(
@@ -86,7 +87,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
                     );
 			    }
 			    setTitle("PhenoMan-Editor - " + path);
-			    phenotypeForm.setModel(model);
+			    phenotypeForm.setMapper(mapper);
 			    tabbedPane.setEnabledAt(2, true);
 			    tabbedPane.setSelectedIndex(2);
 			    reloadEntityTree();
@@ -99,7 +100,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
             @Override
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyCode() != KeyEvent.VK_ENTER) return;
-                if (treeSearchField.getText().isBlank()) return;
+                if (treeSearchField.getText().isEmpty()) return;
 
                 Object root = tree.getModel().getRoot();
                 if (root == null) return;
@@ -116,6 +117,8 @@ public class PhenoManEditor extends JFrame implements ActionListener {
                 }
             }
         });
+
+        mapper = new PhenotypeManagerMapper();
     }
 
     private MutableTreeNode convertToTreeNode(EntityTreeNode entityNode) {
@@ -149,7 +152,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         dlgProgress.setSize(300, 60);
         dlgProgress.setLocationRelativeTo(null);
 
-        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
                 function.call();
@@ -178,8 +181,8 @@ public class PhenoManEditor extends JFrame implements ActionListener {
     }
 
     private void reloadEntityTree() {
-        if (model == null) return;
-        EntityTreeNode node = model.getEntityTree(true);
+        if (mapper == null || !mapper.hasModel()) return;
+        EntityTreeNode node = mapper.getModel().getEntityTreeWithPhenotypes(false);
         tree.setModel(new DefaultTreeModel(convertToTreeNode(node)));
     }
 
@@ -195,31 +198,31 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         switch (ae.getActionCommand()) {
             case "inspect":
                 if (entity == null) return;
-                phenotype = new PhenotypeBean(entity);
+                phenotype = mapper.loadEntity(entity);
                 break;
             case "add_category":
-                if (entity == null) return;
                 phenotype = new PhenotypeBean();
                 phenotype.setType(EntityType.CATEGORY);
-                phenotype.setSuperCategories(Collections.singletonList(entity.asCategory().getName())); // this is dirty and should be replaced by a variable access to COP class
+                if (entity != null) // this is dirty and should be replaced by a variable access to COP class
+                    phenotype.setSuperCategories(Collections.singletonList(entity.asCategory().getName()));
                 break;
             case "add_abstract_single_phenotype":
-                if (entity == null) return;
                 phenotype = new PhenotypeBean();
                 phenotype.setType(EntityType.ABSTRACT_SINGLE_PHENOTYPE);
-                phenotype.setSuperCategories(Collections.singletonList(entity.asCategory().getName()));
+                if (entity != null)
+                    phenotype.setSuperCategories(Collections.singletonList(entity.asCategory().getName()));
                 break;
             case "add_abstract_calculation_phenotype":
-                if (entity == null) return;
                 phenotype = new PhenotypeBean();
                 phenotype.setType(EntityType.ABSTRACT_CALCULATION_PHENOTYPE);
-                phenotype.setSuperCategories(Collections.singletonList(entity.asCategory().getName()));
+                if (entity != null)
+                    phenotype.setSuperCategories(Collections.singletonList(entity.asCategory().getName()));
                 break;
             case "add_abstract_boolean_phenotype":
-                if (entity == null) return;
                 phenotype = new PhenotypeBean();
                 phenotype.setType(EntityType.ABSTRACT_BOOLEAN_PHENOTYPE);
-                phenotype.setSuperCategories(Collections.singletonList(entity.asCategory().getName()));
+                if (entity != null)
+                    phenotype.setSuperCategories(Collections.singletonList(entity.asCategory().getName()));
                 break;
             case "add_restricted_phenotype":
                 if (entity == null) return;
@@ -235,6 +238,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
                 break;
             case "delete":
                 if (entity == null) return;
+                PhenotypeManager model = mapper.getModel();
                 model.removeEntities(entity.getName());
                 model.write();
                 reloadEntityTree();
