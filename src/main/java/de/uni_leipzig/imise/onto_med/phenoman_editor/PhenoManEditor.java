@@ -5,8 +5,8 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.bean.PhenotypeBean;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.form.PhenotypeForm;
-import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeManagerMapper;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
+import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeManagerMapper;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeTree;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -64,8 +64,10 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         tabbedPane.setIconAt(0, IconFontSwing.buildIcon(FontAwesome.INFO, 12));
         tabbedPane.setIconAt(1, IconFontSwing.buildIcon(FontAwesome.SITEMAP, 12));
         tabbedPane.setIconAt(2, IconFontSwing.buildIcon(FontAwesome.PENCIL_SQUARE_O, 12));
-        tabbedPane.setIconAt(3, IconFontSwing.buildIcon(FontAwesome.COGS, 12));
+        tabbedPane.setIconAt(3, IconFontSwing.buildIcon(FontAwesome.BOLT, 12));
+        tabbedPane.setIconAt(4, IconFontSwing.buildIcon(FontAwesome.COGS, 12));
 		tabbedPane.setEnabledAt(2, false);
+        tabbedPane.setEnabledAt(3, false);
         phenotypeForm.setVisible(false);
         phenotypeFormScrollPane.getVerticalScrollBar().setUnitIncrement(10);
         introductionScrollPane.getVerticalScrollBar().setUnitIncrement(10);
@@ -98,6 +100,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
                 setTitle("PhenoMan-Editor - " + path);
                 phenotypeForm.setMapper(mapper);
                 tabbedPane.setEnabledAt(2, true);
+                tabbedPane.setEnabledAt(3, true);
                 tabbedPane.setSelectedIndex(2);
                 reloadEntityTree();
                 return null;
@@ -180,10 +183,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
     }
 
     private void createUIComponents() {
-        ClassLoader classLoader = PhenoManEditor.class.getClassLoader();
-        copImage     = new JLabel(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/COP.png")).getPath()));
-        exampleImage = new JLabel(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/Example_BSA.png")).getPath()));
-        tree         = new PhenotypeTree(this);
+        tree = new PhenotypeTree(this);
         tree.setModel(new DefaultTreeModel(null));
         tree.setShowsRootHandles(true);
         phenotypeForm = new PhenotypeForm(this);
@@ -351,8 +351,11 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         panel6.add(phenotypeFormScrollPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         phenotypeFormScrollPane.setViewportView(phenotypeForm.$$$getRootComponent$$$());
         final JPanel panel7 = new JPanel();
-        panel7.setLayout(new GridLayoutManager(1, 1, new Insets(5, 5, 5, 5), -1, -1));
-        tabbedPane.addTab("Settings", panel7);
+        panel7.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane.addTab("Execute query", panel7);
+        final JPanel panel8 = new JPanel();
+        panel8.setLayout(new GridLayoutManager(1, 1, new Insets(5, 5, 5, 5), -1, -1));
+        tabbedPane.addTab("Settings", panel8);
     }
 
     /**
@@ -380,4 +383,5 @@ public class PhenoManEditor extends JFrame implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return contentPane;
     }
+
 }
