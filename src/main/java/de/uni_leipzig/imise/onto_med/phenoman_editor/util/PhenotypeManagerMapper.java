@@ -402,7 +402,7 @@ public class PhenotypeManagerMapper {
 
 	private @Nonnull PhenotypeBean loadRestrictedBooleanAttributes(@Nonnull RestrictedBooleanPhenotype entity) {
 		return new PhenotypeBean()
-			.setFormula(entity.getManchesterSyntaxExpression())
+			.setFormula(entity.getFormula())
 			.setMainResult(entity.isMainResult());
 	}
 
