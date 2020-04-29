@@ -51,8 +51,9 @@ public class PhenotypeForm extends JPanel {
     private JCheckBox negatedCheckBox;
     private JLabel negatedLabel;
     private JXCollapsiblePane metadataCollapsiblePane;
-    private JButton showAdditionalMetadataButton;
-    private EntityType type;
+    private JButton     showAdditionalMetadataButton;
+    private JScrollPane formulaScrollPane;
+    private EntityType  type;
 
     public PhenotypeForm(ActionListener listener) {
         scoreField.setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(new DecimalFormat("###0.00"))));
@@ -183,7 +184,7 @@ public class PhenotypeForm extends JPanel {
         datatypeLabel.setVisible(type.hasDatatype());
         datatypeField.setVisible(type.hasDatatype());
         formulaLabel.setVisible(type.hasFormula());
-        formulaField.setVisible(type.hasFormula());
+        formulaScrollPane.setVisible(type.hasFormula());
         ucumLabel.setVisible(type.equals(EntityType.ABSTRACT_SINGLE_PHENOTYPE));
         unitsField.setVisible(type.equals(EntityType.ABSTRACT_SINGLE_PHENOTYPE));
         codesLabel.setVisible(!type.equals(EntityType.CATEGORY));
