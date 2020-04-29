@@ -2,3 +2,4 @@
 *.jar
 /.idea/
 /target/
+/dependency-reduced-pom.xml
