@@ -104,7 +104,10 @@ public class PhenotypeForm extends JPanel {
         }
 
         if (type.hasFormula()) formulaField.setText(data.getFormula());
-        if (type.hasDatatype()) datatypeField.getModel().setSelectedItem(data.getDatatype());
+        if (type.hasDatatype()) {
+            datatypeField.getModel().setSelectedItem(data.getDatatype());
+            datatypeField.intervalAdded(null);
+        }
 
         if (type.isRestrictedPhenotype()) {
             scoreField.setValue(data.getScore());
