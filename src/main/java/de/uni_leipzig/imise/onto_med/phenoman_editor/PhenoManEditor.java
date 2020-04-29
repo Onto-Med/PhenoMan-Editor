@@ -46,7 +46,12 @@ public class PhenoManEditor extends JFrame implements ActionListener {
 
     public PhenoManEditor() {
         IconFontSwing.register(FontAwesome.getIconFont());
-        setIconImage(new ImageIcon(Objects.requireNonNull(PhenoManEditor.class.getClassLoader().getResource("images/favicon.png"))).getImage());
+
+        ClassLoader classLoader = PhenoManEditor.class.getClassLoader();
+        setIconImage(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/favicon.png"))).getImage());
+        copImage.setIcon(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/COP.png"))));
+        exampleImage.setIcon(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/Example_BSA.png"))));
+
 		add(contentPane);
 		setTitle("PhenoMan-Editor");
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
