@@ -4,6 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.bean.PhenotypeBean;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
+import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeManagerMapper;
 import org.smith.phenoman.man.PhenotypeManager;
 import org.smith.phenoman.model.phenotype.top_level.Entity;
 
@@ -25,6 +26,12 @@ public class EditorForm extends PhenotypeTab {
         $$$setupUI$$$();
         form.setVisible(false);
         formScrollPane.getVerticalScrollBar().setUnitIncrement(10);
+    }
+
+    @Override
+    public void setMapper(PhenotypeManagerMapper mapper) {
+        this.mapper = mapper;
+        form.setMapper(mapper);
     }
 
     public void actionPerformed(ActionEvent ae) {
