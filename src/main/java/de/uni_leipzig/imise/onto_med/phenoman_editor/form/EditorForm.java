@@ -4,7 +4,6 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.bean.PhenotypeBean;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
-import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeManagerMapper;
 import org.smith.phenoman.man.PhenotypeManager;
 import org.smith.phenoman.model.phenotype.top_level.Entity;
 
@@ -12,15 +11,14 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collections;
 
-public class EditorForm extends JPanel implements ActionListener {
-    private PhenotypeTreeForm      tree;
-    private JScrollPane            formScrollPane;
-    private PhenotypeForm          form;
-    private JPanel                 contentPane;
-    private PhenotypeManagerMapper mapper;
+public class EditorForm extends PhenotypeTab {
+    private JPanel            contentPane;
+    private JScrollPane       formScrollPane;
+    private PhenotypeForm     form;
+    private PhenotypeTreeForm tree;
+
 
     public EditorForm() {
         super();
@@ -29,11 +27,6 @@ public class EditorForm extends JPanel implements ActionListener {
         formScrollPane.getVerticalScrollBar().setUnitIncrement(10);
     }
 
-    public void setMapper(PhenotypeManagerMapper mapper) {
-        this.mapper = mapper;
-    }
-
-    @Override
     public void actionPerformed(ActionEvent ae) {
         Entity entity = null;
 
@@ -100,14 +93,14 @@ public class EditorForm extends JPanel implements ActionListener {
         form.setVisible(true);
     }
 
-    private void reloadEntityTree() {
-        if (mapper == null || !mapper.hasModel()) return;
-        tree.fillTree(mapper.getModel().getEntityTreeWithPhenotypes(false));
-    }
-
     private void createUIComponents() {
         tree = new PhenotypeTreeForm(this);
         form = new PhenotypeForm(this);
+    }
+
+    private void reloadEntityTree() {
+        if (mapper == null || !mapper.hasModel()) return;
+        tree.fillTree(mapper.getModel().getEntityTreeWithPhenotypes(false));
     }
 
     /**
