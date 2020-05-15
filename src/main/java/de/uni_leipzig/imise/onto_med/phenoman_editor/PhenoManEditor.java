@@ -5,26 +5,22 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.bean.PhenotypeBean;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.form.PhenotypeForm;
+import de.uni_leipzig.imise.onto_med.phenoman_editor.form.PhenotypeTreeForm;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeManagerMapper;
-import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeTree;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import org.smith.phenoman.man.PhenotypeManager;
-import org.smith.phenoman.model.category_tree.EntityTreeNode;
 import org.smith.phenoman.model.phenotype.top_level.Entity;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
@@ -36,16 +32,15 @@ public class PhenoManEditor extends JFrame implements ActionListener {
     private JButton                loadOntologyButton;
     private JButton                reloadButton;
     private PhenotypeForm          phenotypeForm;
-    private PhenotypeTree          tree;
-    private JTextField             treeSearchField;
     private JScrollPane            phenotypeFormScrollPane;
     private JScrollPane            introductionScrollPane;
     private PhenotypeManagerMapper mapper;
 
     @SuppressWarnings("unused")
-    private JLabel copImage;
+    private JLabel            copImage;
     @SuppressWarnings("unused")
-    private JLabel exampleImage;
+    private JLabel            exampleImage;
+    private PhenotypeTreeForm phenotypeTreeForm;
 
     public PhenoManEditor() {
         $$$setupUI$$$();
@@ -56,17 +51,17 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         copImage.setIcon(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/COP.png"))));
         exampleImage.setIcon(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/Example_BSA.png"))));
 
-		add(contentPane);
-		setTitle("PhenoMan-Editor");
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setSize(1000, 700);
-		setLocationRelativeTo(null);
+        add(contentPane);
+        setTitle("PhenoMan-Editor");
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setSize(1000, 700);
+        setLocationRelativeTo(null);
         tabbedPane.setIconAt(0, IconFontSwing.buildIcon(FontAwesome.INFO, 12));
         tabbedPane.setIconAt(1, IconFontSwing.buildIcon(FontAwesome.SITEMAP, 12));
         tabbedPane.setIconAt(2, IconFontSwing.buildIcon(FontAwesome.PENCIL_SQUARE_O, 12));
         tabbedPane.setIconAt(3, IconFontSwing.buildIcon(FontAwesome.BOLT, 12));
         tabbedPane.setIconAt(4, IconFontSwing.buildIcon(FontAwesome.COGS, 12));
-		tabbedPane.setEnabledAt(2, false);
+        tabbedPane.setEnabledAt(2, false);
         tabbedPane.setEnabledAt(3, false);
         phenotypeForm.setVisible(false);
         phenotypeFormScrollPane.getVerticalScrollBar().setUnitIncrement(10);
@@ -78,14 +73,14 @@ public class PhenoManEditor extends JFrame implements ActionListener {
             if (fileChooser.showOpenDialog(new JFrame()) != JFileChooser.APPROVE_OPTION) return;
 
             File file = fileChooser.getSelectedFile();
-			ontologyPath.setText(file.getAbsolutePath());
-		});
+            ontologyPath.setText(file.getAbsolutePath());
+        });
 
-		loadOntologyButton.addActionListener(actionEvent -> {
-			String path = ontologyPath.getText();
-			if (path.isEmpty()) return;
+        loadOntologyButton.addActionListener(actionEvent -> {
+            String path = ontologyPath.getText();
+            if (path.isEmpty()) return;
 
-			doInBackground("Loading ontology...", () -> {
+            doInBackground("Loading ontology...", () -> {
                 mapper.setModel(null);
                 setTitle("PhenoMan-Editor");
                 try {
@@ -104,39 +99,12 @@ public class PhenoManEditor extends JFrame implements ActionListener {
                 tabbedPane.setSelectedIndex(2);
                 reloadEntityTree();
                 return null;
-			});
-		});
-		reloadButton.setIcon(IconFontSwing.buildIcon(FontAwesome.REFRESH, 12));
-        reloadButton.addActionListener(actionEvent -> reloadEntityTree());
-        treeSearchField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() != KeyEvent.VK_ENTER) return;
-                if (treeSearchField.getText().isEmpty()) return;
-
-                Object root = tree.getModel().getRoot();
-                if (root == null) return;
-
-                Enumeration<TreeNode> enumeration = ((DefaultMutableTreeNode) root).depthFirstEnumeration();
-                while (enumeration.hasMoreElements()) {
-                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) enumeration.nextElement();
-                    if (node.toString().toLowerCase().contains(treeSearchField.getText().toLowerCase())) {
-                        TreePath path = new TreePath(node.getPath());
-                        tree.setSelectionPath(path);
-                        tree.scrollPathToVisible(path);
-                        break;
-                    }
-                }
-            }
+            });
         });
+        reloadButton.setIcon(IconFontSwing.buildIcon(FontAwesome.REFRESH, 12));
+        reloadButton.addActionListener(actionEvent -> reloadEntityTree());
 
         mapper = new PhenotypeManagerMapper();
-    }
-
-    private MutableTreeNode convertToTreeNode(EntityTreeNode entityNode) {
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode(entityNode.getEntity(), true);
-        entityNode.getChildren().forEach(c -> node.add(convertToTreeNode(c)));
-        return node;
     }
 
     public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
@@ -183,16 +151,13 @@ public class PhenoManEditor extends JFrame implements ActionListener {
     }
 
     private void createUIComponents() {
-        tree = new PhenotypeTree(this);
-        tree.setModel(new DefaultTreeModel(null));
-        tree.setShowsRootHandles(true);
         phenotypeForm = new PhenotypeForm(this);
+        phenotypeTreeForm = new PhenotypeTreeForm(this);
     }
 
     private void reloadEntityTree() {
         if (mapper == null || !mapper.hasModel()) return;
-        EntityTreeNode node = mapper.getModel().getEntityTreeWithPhenotypes(false);
-        tree.setModel(new DefaultTreeModel(convertToTreeNode(node)));
+        phenotypeTreeForm.fillTree(mapper.getModel().getEntityTreeWithPhenotypes(false));
     }
 
     @Override
@@ -334,16 +299,12 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         final JSplitPane splitPane1 = new JSplitPane();
         panel4.add(splitPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
         final JPanel panel5 = new JPanel();
-        panel5.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel5.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
         splitPane1.setLeftComponent(panel5);
         reloadButton = new JButton();
         reloadButton.setText("Reload");
         panel5.add(reloadButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        tree.setDragEnabled(true);
-        panel5.add(tree, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(100, -1), null, null, 0, false));
-        treeSearchField = new JTextField();
-        treeSearchField.setToolTipText("Search for phenotype tree node");
-        panel5.add(treeSearchField, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        panel5.add(phenotypeTreeForm.$$$getRootComponent$$$(), new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         splitPane1.setRightComponent(panel6);
