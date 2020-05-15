@@ -3,44 +3,36 @@ package de.uni_leipzig.imise.onto_med.phenoman_editor;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import de.uni_leipzig.imise.onto_med.phenoman_editor.bean.PhenotypeBean;
+import de.uni_leipzig.imise.onto_med.phenoman_editor.form.EditorForm;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.form.PhenotypeForm;
-import de.uni_leipzig.imise.onto_med.phenoman_editor.form.PhenotypeTreeForm;
-import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
+import de.uni_leipzig.imise.onto_med.phenoman_editor.form.QueryForm;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeManagerMapper;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import org.smith.phenoman.man.PhenotypeManager;
-import org.smith.phenoman.model.phenotype.top_level.Entity;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
-public class PhenoManEditor extends JFrame implements ActionListener {
+public class PhenoManEditor extends JFrame {
     private JTabbedPane            tabbedPane;
     private JPanel                 contentPane;
     private JTextField             ontologyPath;
     private JButton                browseButton;
     private JButton                loadOntologyButton;
-    private JButton                reloadButton;
-    private PhenotypeForm          phenotypeForm;
-    private JScrollPane            phenotypeFormScrollPane;
     private JScrollPane            introductionScrollPane;
     private PhenotypeManagerMapper mapper;
 
     @SuppressWarnings("unused")
-    private JLabel            copImage;
+    private JLabel     copImage;
     @SuppressWarnings("unused")
-    private JLabel            exampleImage;
-    private PhenotypeTreeForm phenotypeTreeForm;
+    private JLabel     exampleImage;
+    private EditorForm editorTab;
+    private QueryForm  queryTab;
 
     public PhenoManEditor() {
         $$$setupUI$$$();
@@ -63,8 +55,6 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         tabbedPane.setIconAt(4, IconFontSwing.buildIcon(FontAwesome.COGS, 12));
         tabbedPane.setEnabledAt(2, false);
         tabbedPane.setEnabledAt(3, false);
-        phenotypeForm.setVisible(false);
-        phenotypeFormScrollPane.getVerticalScrollBar().setUnitIncrement(10);
         introductionScrollPane.getVerticalScrollBar().setUnitIncrement(10);
 
         browseButton.addActionListener(actionEvent -> {
@@ -93,16 +83,14 @@ public class PhenoManEditor extends JFrame implements ActionListener {
                     );
                 }
                 setTitle("PhenoMan-Editor - " + path);
-                phenotypeForm.setMapper(mapper);
+                editorTab.setMapper(mapper);
+                queryTab.setMapper(mapper);
                 tabbedPane.setEnabledAt(2, true);
                 tabbedPane.setEnabledAt(3, true);
                 tabbedPane.setSelectedIndex(2);
-                reloadEntityTree();
                 return null;
             });
         });
-        reloadButton.setIcon(IconFontSwing.buildIcon(FontAwesome.REFRESH, 12));
-        reloadButton.addActionListener(actionEvent -> reloadEntityTree());
 
         mapper = new PhenotypeManagerMapper();
     }
@@ -150,82 +138,6 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         validate();
     }
 
-    private void createUIComponents() {
-        phenotypeForm = new PhenotypeForm(this);
-        phenotypeTreeForm = new PhenotypeTreeForm(this);
-    }
-
-    private void reloadEntityTree() {
-        if (mapper == null || !mapper.hasModel()) return;
-        phenotypeTreeForm.fillTree(mapper.getModel().getEntityTreeWithPhenotypes(false));
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent ae) {
-        Entity entity = null;
-
-        if (ae.getSource() instanceof DefaultMutableTreeNode) {
-            entity = (Entity) ((DefaultMutableTreeNode) ae.getSource()).getUserObject();
-        }
-
-        PhenotypeBean phenotype;
-        switch (ae.getActionCommand()) {
-            case "inspect":
-                if (entity == null) return;
-                phenotype = mapper.loadEntity(entity);
-                break;
-            case "add_category":
-                phenotype = new PhenotypeBean();
-                phenotype.setType(EntityType.CATEGORY);
-                if (entity != null) // this is dirty and should be replaced by a variable access to COP class
-                    phenotype.setSuperCategories(Collections.singletonList(entity.asCategory().getName()));
-                break;
-            case "add_abstract_single_phenotype":
-                phenotype = new PhenotypeBean();
-                phenotype.setType(EntityType.ABSTRACT_SINGLE_PHENOTYPE);
-                if (entity != null)
-                    phenotype.setSuperCategories(Collections.singletonList(entity.asCategory().getName()));
-                break;
-            case "add_abstract_calculation_phenotype":
-                phenotype = new PhenotypeBean();
-                phenotype.setType(EntityType.ABSTRACT_CALCULATION_PHENOTYPE);
-                if (entity != null)
-                    phenotype.setSuperCategories(Collections.singletonList(entity.asCategory().getName()));
-                break;
-            case "add_abstract_boolean_phenotype":
-                phenotype = new PhenotypeBean();
-                phenotype.setType(EntityType.ABSTRACT_BOOLEAN_PHENOTYPE);
-                if (entity != null)
-                    phenotype.setSuperCategories(Collections.singletonList(entity.asCategory().getName()));
-                break;
-            case "add_restricted_phenotype":
-                if (entity == null) return;
-                phenotype = new PhenotypeBean();
-                if (entity.isAbstractSinglePhenotype()) {
-                    phenotype.setType(EntityType.RESTRICTED_SINGLE_PHENOTYPE);
-                } else if (entity.isAbstractCalculationPhenotype()) {
-                    phenotype.setType(EntityType.RESTRICTED_CALCULATION_PHENOTYPE);
-                } else {
-                    phenotype.setType(EntityType.RESTRICTED_BOOLEAN_PHENOTYPE);
-                }
-                phenotype.setSuperPhenotype(entity.getName());
-                break;
-            case "delete":
-                if (entity == null) return;
-                PhenotypeManager model = mapper.getModel();
-                model.removeEntities(entity.getName());
-                model.write();
-                reloadEntityTree();
-            case "phenotype_saved":
-                reloadEntityTree();
-            default:
-                return;
-        }
-
-        phenotypeForm.setData(phenotype);
-        phenotypeForm.setVisible(true);
-    }
-
     /**
      * Method generated by IntelliJ IDEA GUI Designer
      * >>> IMPORTANT!! <<<
@@ -234,7 +146,6 @@ public class PhenoManEditor extends JFrame implements ActionListener {
      * @noinspection ALL
      */
     private void $$$setupUI$$$() {
-        createUIComponents();
         contentPane = new JPanel();
         contentPane.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane = new JTabbedPane();
@@ -296,27 +207,16 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         panel4.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         panel4.setEnabled(true);
         tabbedPane.addTab("Editor", panel4);
-        final JSplitPane splitPane1 = new JSplitPane();
-        panel4.add(splitPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
+        editorTab = new EditorForm();
+        panel4.add(editorTab.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel5 = new JPanel();
-        panel5.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
-        splitPane1.setLeftComponent(panel5);
-        reloadButton = new JButton();
-        reloadButton.setText("Reload");
-        panel5.add(reloadButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        panel5.add(phenotypeTreeForm.$$$getRootComponent$$$(), new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel5.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane.addTab("Execute query", panel5);
+        queryTab = new QueryForm();
+        panel5.add(queryTab.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel6 = new JPanel();
-        panel6.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        splitPane1.setRightComponent(panel6);
-        phenotypeFormScrollPane = new JScrollPane();
-        panel6.add(phenotypeFormScrollPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        phenotypeFormScrollPane.setViewportView(phenotypeForm.$$$getRootComponent$$$());
-        final JPanel panel7 = new JPanel();
-        panel7.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane.addTab("Execute query", panel7);
-        final JPanel panel8 = new JPanel();
-        panel8.setLayout(new GridLayoutManager(1, 1, new Insets(5, 5, 5, 5), -1, -1));
-        tabbedPane.addTab("Settings", panel8);
+        panel6.setLayout(new GridLayoutManager(1, 1, new Insets(5, 5, 5, 5), -1, -1));
+        tabbedPane.addTab("Settings", panel6);
     }
 
     /**

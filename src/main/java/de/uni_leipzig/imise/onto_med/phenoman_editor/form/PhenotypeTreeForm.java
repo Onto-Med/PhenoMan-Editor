@@ -3,6 +3,8 @@ package de.uni_leipzig.imise.onto_med.phenoman_editor.form;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeTree;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import org.smith.phenoman.model.category_tree.EntityTreeNode;
 
 import javax.swing.*;
@@ -16,15 +18,18 @@ import java.util.Enumeration;
 
 public class PhenotypeTreeForm extends JPanel implements ActionListener {
     private final ActionListener listener;
-    private JTextField treeSearchField;
-    private PhenotypeTree tree;
-    private JPanel contentPane;
+    private       JTextField     treeSearchField;
+    private       PhenotypeTree  tree;
+    private       JPanel         contentPane;
+    private       JButton        reloadButton;
 
     /**
      * Create a new PhenotypeTreeForm with a JTree of phenotypes and a search field.
+     *
      * @param listener A listener, which should handle click events of the JTree.
      */
     public PhenotypeTreeForm(ActionListener listener) {
+        super();
         $$$setupUI$$$();
         this.listener = listener;
         treeSearchField.addKeyListener(new KeyAdapter() {
@@ -46,6 +51,14 @@ public class PhenotypeTreeForm extends JPanel implements ActionListener {
                         break;
                     }
                 }
+            }
+        });
+
+        reloadButton.setIcon(IconFontSwing.buildIcon(FontAwesome.REFRESH, 12));
+        reloadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                listener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "reload"));
             }
         });
     }
@@ -81,13 +94,16 @@ public class PhenotypeTreeForm extends JPanel implements ActionListener {
     private void $$$setupUI$$$() {
         createUIComponents();
         contentPane = new JPanel();
-        contentPane.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        contentPane.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
         treeSearchField = new JTextField();
         treeSearchField.setText("");
         treeSearchField.setToolTipText("Search for phenotype tree node");
-        contentPane.add(treeSearchField, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        contentPane.add(treeSearchField, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         tree.setDragEnabled(true);
-        contentPane.add(tree, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(100, -1), null, null, 0, false));
+        contentPane.add(tree, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(100, -1), null, null, 0, false));
+        reloadButton = new JButton();
+        reloadButton.setText("Reload");
+        contentPane.add(reloadButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
@@ -96,4 +112,5 @@ public class PhenotypeTreeForm extends JPanel implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return contentPane;
     }
+
 }
