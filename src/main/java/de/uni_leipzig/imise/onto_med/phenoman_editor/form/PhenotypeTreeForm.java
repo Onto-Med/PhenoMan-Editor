@@ -3,6 +3,7 @@ package de.uni_leipzig.imise.onto_med.phenoman_editor.form;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeTree;
+import de.uni_leipzig.imise.onto_med.phenoman_editor.util.TreeTransferHandler;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import org.smith.phenoman.model.category_tree.EntityTreeNode;
@@ -61,6 +62,11 @@ public class PhenotypeTreeForm extends JPanel implements ActionListener {
                 listener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "reload"));
             }
         });
+    }
+
+    public PhenotypeTreeForm(ActionListener listener, TransferHandler transferHandler) {
+        this(listener);
+        if (transferHandler != null) tree.setTransferHandler(transferHandler);
     }
 
     public void fillTree(EntityTreeNode node) {

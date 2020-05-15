@@ -2,11 +2,20 @@ package de.uni_leipzig.imise.onto_med.phenoman_editor.form;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import de.uni_leipzig.imise.onto_med.phenoman_editor.util.TreeTransferHandler;
 import org.smith.phenoman.model.phenotype.top_level.AbstractPhenotype;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.util.Arrays;
 
 public class QueryForm extends PhenotypeTab {
     private JPanel                   contentPane;
@@ -29,11 +38,26 @@ public class QueryForm extends PhenotypeTab {
     }
 
     private void createUIComponents() {
-        tree = new PhenotypeTreeForm(this);
-        queryList = new JList<AbstractPhenotype>();
-        queryList.setDragEnabled(true);
-        queryList.setDropMode(DropMode.INSERT);
+        tree = new PhenotypeTreeForm(this, new TreeTransferHandler());
+        queryList = new JList<>();
+        queryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         queryList.setTransferHandler(new TransferHandler("entity"));
+        queryList.setDropTarget(new DropTarget(queryList, TransferHandler.COPY, new DropTargetAdapter() {
+            private void print(Transferable tr) {
+                try {
+                    Object node = tr.getTransferData(TreeTransferHandler.FLAVOR);
+                    System.out.println(((DefaultMutableTreeNode) node).getUserObject());
+                } catch (UnsupportedFlavorException | IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            @Override
+            public void drop(DropTargetDropEvent dtde) {
+                if (dtde.isDataFlavorSupported(TreeTransferHandler.FLAVOR))
+                    print(dtde.getTransferable());
+            }
+        }, true, null));
     }
 
     private void reloadEntityTree() {
