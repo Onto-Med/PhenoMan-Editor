@@ -3,7 +3,7 @@ package de.uni_leipzig.imise.onto_med.phenoman_editor.form;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.TreeTransferHandler;
-import org.smith.phenoman.model.phenotype.top_level.AbstractPhenotype;
+import care.smith.phep.phenoman.core.model.phenotype.top_level.AbstractPhenotype;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;

@@ -6,7 +6,7 @@ import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeTree;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.TreeTransferHandler;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import org.smith.phenoman.model.category_tree.EntityTreeNode;
+import care.smith.phep.phenoman.core.model.category_tree.EntityTreeNode;
 
 import javax.swing.*;
 import javax.swing.tree.*;
