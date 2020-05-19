@@ -1,6 +1,6 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor.util;
 
-import org.smith.phenoman.model.phenotype.top_level.Entity;
+import care.smith.phep.phenoman.core.model.phenotype.top_level.Entity;
 
 public enum EntityType {
     CATEGORY("Category"),

@@ -2,11 +2,11 @@ package de.uni_leipzig.imise.onto_med.phenoman_editor.util;
 
 import de.uni_leipzig.imise.onto_med.phenoman_editor.bean.PhenotypeBean;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
-import org.smith.phenoman.exception.WrongPhenotypeTypeException;
-import org.smith.phenoman.man.PhenotypeManager;
-import org.smith.phenoman.model.code_system.Code;
-import org.smith.phenoman.model.phenotype.*;
-import org.smith.phenoman.model.phenotype.top_level.*;
+import care.smith.phep.phenoman.core.exception.WrongPhenotypeTypeException;
+import care.smith.phep.phenoman.core.man.PhenotypeManager;
+import care.smith.phep.phenoman.core.model.code_system.Code;
+import care.smith.phep.phenoman.core.model.phenotype.*;
+import care.smith.phep.phenoman.core.model.phenotype.top_level.*;
 
 import javax.activation.UnsupportedDataTypeException;
 import javax.annotation.Nonnull;

@@ -9,7 +9,9 @@ import de.uni_leipzig.imise.onto_med.phenoman_editor.form.QueryForm;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeManagerMapper;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import org.smith.phenoman.man.PhenotypeManager;
+import care.smith.phep.phenoman.core.man.PhenotypeManager;
+import care.smith.phep.phenoman.core.model.category_tree.EntityTreeNode;
+import care.smith.phep.phenoman.core.model.phenotype.top_level.Entity;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
