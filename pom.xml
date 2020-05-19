@@ -12,10 +12,18 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>phep-mvn</id>
+            <!--suppress UnresolvedMavenProperty -->
+            <url>${env.CI_MAVEN_URL}</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
-            <groupId>org.smith</groupId>
-            <artifactId>phenoman</artifactId>
+            <groupId>care.smith.phep.phenoman</groupId>
+            <artifactId>phenoman-core</artifactId>
             <version>0.3.3</version>
         </dependency>
         <dependency>

@@ -4,15 +4,11 @@ import de.imise.onto_api.entities.restrictions.data_range.DataRange;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.LocalizedString;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
-import org.smith.phenoman.exception.WrongPhenotypeTypeException;
-import org.smith.phenoman.man.PhenotypeManager;
-import org.smith.phenoman.model.code_system.Code;
-import org.smith.phenoman.model.phenotype.*;
-import org.smith.phenoman.model.phenotype.top_level.*;
 
 import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class PhenotypeBean {
 	/**
