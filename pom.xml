@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.uni_leipzig.imise.onto_med</groupId>
-    <artifactId>phenoman_editor</artifactId>
+    <artifactId>phenoman-editor</artifactId>
     <version>0.1.0</version>
 
     <properties>
@@ -24,7 +24,7 @@
         <dependency>
             <groupId>care.smith.phep.phenoman</groupId>
             <artifactId>phenoman-core</artifactId>
-            <version>0.3.3</version>
+            <version>0.4</version>
         </dependency>
         <dependency>
             <groupId>com.github.jiconfont</groupId>

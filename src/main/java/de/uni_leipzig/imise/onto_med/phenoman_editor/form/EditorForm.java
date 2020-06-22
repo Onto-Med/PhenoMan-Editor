@@ -86,8 +86,8 @@ public class EditorForm extends PhenotypeTab {
             case "delete":
                 if (entity == null) return;
                 PhenotypeManager model = mapper.getModel();
-                model.removeEntities(entity.getName());
-                model.write();
+                model.getCleaner().removeEntities(entity.getName());
+                model.getWriter().write();
                 reloadEntityTree();
             case "reload":
             case "phenotype_saved":
@@ -107,7 +107,7 @@ public class EditorForm extends PhenotypeTab {
 
     private void reloadEntityTree() {
         if (mapper == null || !mapper.hasModel()) return;
-        tree.fillTree(mapper.getModel().getEntityTreeWithPhenotypes(false));
+        tree.fillTree(mapper.getModel().getReader().getEntityTreeWithPhenotypes(false));
     }
 
     /**

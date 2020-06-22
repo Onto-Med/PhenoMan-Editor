@@ -204,7 +204,7 @@ public class PhenotypeForm extends JPanel {
     }
 
     private void createUIComponents() {
-        datatypeField           = new JComboBox<>(new OWL2DatatypeComboBoxModel());
+        datatypeField = new JComboBox<>(new OWL2DatatypeComboBoxModel());
         metadataCollapsiblePane = new JXCollapsiblePane();
         metadataCollapsiblePane.setCollapsed(true);
         showAdditionalMetadataButton = new JButton(metadataCollapsiblePane.getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION));
@@ -220,7 +220,7 @@ public class PhenotypeForm extends JPanel {
     private void $$$setupUI$$$() {
         createUIComponents();
         contentPane = new JPanel();
-        contentPane.setLayout(new GridLayoutManager(16, 4, new Insets(5, 5, 5, 5), -1, -1));
+        contentPane.setLayout(new GridLayoutManager(17, 4, new Insets(5, 5, 5, 5), -1, -1));
         final JLabel label1 = new JLabel();
         label1.setText("ID:*");
         contentPane.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -231,7 +231,7 @@ public class PhenotypeForm extends JPanel {
         contentPane.add(label2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         saveButton = new JButton();
         saveButton.setText("Save");
-        contentPane.add(saveButton, new GridConstraints(14, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        contentPane.add(saveButton, new GridConstraints(15, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         mainTitleField = new JTextField();
         contentPane.add(mainTitleField, new GridConstraints(1, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         superPhenotypeLabel = new JLabel();
@@ -260,7 +260,7 @@ public class PhenotypeForm extends JPanel {
         final Spacer spacer1 = new Spacer();
         contentPane.add(spacer1, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
-        contentPane.add(spacer2, new GridConstraints(15, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        contentPane.add(spacer2, new GridConstraints(16, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JSeparator separator1 = new JSeparator();
         contentPane.add(separator1, new GridConstraints(7, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         rangeField = new DataRangeField();
@@ -313,13 +313,15 @@ public class PhenotypeForm extends JPanel {
         final JLabel label7 = new JLabel();
         label7.setEnabled(false);
         label7.setText("* Required fields");
-        contentPane.add(label7, new GridConstraints(14, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        contentPane.add(label7, new GridConstraints(15, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         formulaScrollPane = new JScrollPane();
         contentPane.add(formulaScrollPane, new GridConstraints(9, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         formulaField = new JTextArea();
         formulaField.setLineWrap(true);
         formulaField.setWrapStyleWord(true);
         formulaScrollPane.setViewportView(formulaField);
+        final JSeparator separator2 = new JSeparator();
+        contentPane.add(separator2, new GridConstraints(14, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         label1.setLabelFor(idField);
         label2.setLabelFor(mainTitleField);
         formulaLabel.setLabelFor(formulaField);
@@ -335,4 +337,5 @@ public class PhenotypeForm extends JPanel {
     public JComponent $$$getRootComponent$$$() {
         return contentPane;
     }
+
 }

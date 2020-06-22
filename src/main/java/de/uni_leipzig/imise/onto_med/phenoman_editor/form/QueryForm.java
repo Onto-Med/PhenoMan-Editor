@@ -62,7 +62,7 @@ public class QueryForm extends PhenotypeTab {
 
     private void reloadEntityTree() {
         if (mapper == null || !mapper.hasModel()) return;
-        tree.fillTree(mapper.getModel().getEntityTreeWithPhenotypes(false));
+        tree.fillTree(mapper.getModel().getReader().getEntityTreeWithPhenotypes(false));
     }
 
     /**
