@@ -24,7 +24,7 @@
         <dependency>
             <groupId>care.smith.phep.phenoman</groupId>
             <artifactId>phenoman-core</artifactId>
-            <version>0.4</version>
+            <version>0.5-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.github.jiconfont</groupId>
