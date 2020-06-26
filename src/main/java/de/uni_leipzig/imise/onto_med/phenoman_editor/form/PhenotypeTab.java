@@ -7,16 +7,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public abstract class PhenotypeTab extends JPanel implements ActionListener {
-    protected PhenotypeManagerMapper mapper;
+  protected PhenotypeManagerMapper mapper;
 
-    public PhenotypeTab() {
-        super();
-    }
+  public PhenotypeTab() {
+    super();
+  }
 
-    public void setMapper(PhenotypeManagerMapper mapper) {
-        this.mapper = mapper;
-    }
+  public void setMapper(PhenotypeManagerMapper mapper) {
+    this.mapper = mapper;
+  }
 
-    @Override
-    public abstract void actionPerformed(ActionEvent e);
+  @Override
+  public abstract void actionPerformed(ActionEvent e);
 }

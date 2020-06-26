@@ -8,71 +8,70 @@ import java.util.List;
 import java.util.Locale;
 
 public class LocalizedStringTableModel extends AbstractTableModel {
-    private List<LocalizedString> rows = new ArrayList<>();
+  private List<LocalizedString> rows = new ArrayList<>();
 
-    public LocalizedStringTableModel() {}
+  public LocalizedStringTableModel() {}
 
-    public void setRows(List<LocalizedString> rows) {
-        this.rows = rows;
-        fireTableDataChanged();
+  public List<LocalizedString> getRows() {
+    return rows;
+  }
+
+  public void setRows(List<LocalizedString> rows) {
+    this.rows = rows;
+    fireTableDataChanged();
+  }
+
+  @Override
+  public int getRowCount() {
+    return rows.size();
+  }
+
+  @Override
+  public int getColumnCount() {
+    return 2;
+  }
+
+  @Override
+  public Object getValueAt(int row, int col) {
+    if (col == 0) {
+      return rows.get(row).getLocale();
+    } else if (col == 1) {
+      return rows.get(row).getString();
     }
+    return null;
+  }
 
-    public List<LocalizedString> getRows() {
-        return rows;
+  public String getColumnName(int column) {
+    if (column == 0) return "Language";
+    if (column == 1) return "String";
+    return null;
+  }
+
+  public boolean isCellEditable(int row, int col) {
+    return true;
+  }
+
+  public void setValueAt(Object value, int row, int col) {
+    if ((col == 0 || col == 1) && rows.size() <= row) rows.add(row, new LocalizedString());
+
+    if (col == 0) {
+      rows.get(row).setLocale((Locale) value);
+    } else if (col == 1) {
+      rows.get(row).setString((String) value);
     }
+    fireTableCellUpdated(row, col);
+  }
 
-    @Override
-    public int getRowCount() {
-        return rows.size();
-    }
+  public void addRow(LocalizedString row) {
+    rows.add(row);
+    int index = getRowCount() - 1;
+    fireTableRowsInserted(index, index);
+  }
 
-    @Override
-    public int getColumnCount() {
-        return 2;
-    }
+  public void removeRow(int row) {
+    if (rows.size() <= row) return;
 
-    @Override
-    public Object getValueAt(int row, int col) {
-        if (col == 0) {
-            return rows.get(row).getLocale();
-        } else if (col == 1) {
-            return rows.get(row).getString();
-        }
-        return null;
-    }
-
-    public String getColumnName(int column) {
-        if (column == 0) return "Language";
-        if (column == 1) return "String";
-        return null;
-    }
-
-    public boolean isCellEditable(int row, int col) {
-        return true;
-    }
-
-    public void setValueAt(Object value, int row, int col) {
-        if ((col == 0 || col == 1) && rows.size() <= row)
-            rows.add(row, new LocalizedString());
-
-        if (col == 0) {
-            rows.get(row).setLocale((Locale) value);
-        } else if (col == 1) {
-            rows.get(row).setString((String) value);
-        }
-        fireTableCellUpdated(row, col);
-    }
-
-    public void addRow(LocalizedString row) {
-        rows.add(row);
-        int index = getRowCount() - 1;
-        fireTableRowsInserted(index, index);
-    }
-
-    public void removeRow(int row) {
-        if (rows.size() <= row) return;
-
-        rows.remove(row);
-        fireTableRowsDeleted(row, row);
-    }
+    rows.remove(row);
+    fireTableRowsDeleted(row, row);
+  }
 }

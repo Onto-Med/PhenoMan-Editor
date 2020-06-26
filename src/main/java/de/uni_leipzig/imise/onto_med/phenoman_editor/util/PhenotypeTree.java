@@ -8,33 +8,40 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class PhenotypeTree extends JTree implements ActionListener {
-    ActionListener listener;
+  ActionListener listener;
 
-    public PhenotypeTree(ActionListener listener) {
-        super();
-        this.listener = listener;
-        setCellRenderer(new PhenotypeTreeCellRenderer());
-        JPopupMenu popup = new PhenotypeTreePopup(this);
+  public PhenotypeTree(ActionListener listener) {
+    super();
+    this.listener = listener;
+    setCellRenderer(new PhenotypeTreeCellRenderer());
+    JPopupMenu popup = new PhenotypeTreePopup(this);
 
-        addMouseListener(new MouseAdapter() {
-            public void mouseReleased(MouseEvent e) {
-                TreePath selectedPath = getPathForLocation(e.getX(), e.getY());
-                setSelectionPath(selectedPath);
-                if (e.isPopupTrigger())
-                    popup.show((JComponent) e.getSource(), e.getX(), e.getY());
-            }
-            public void mousePressed(MouseEvent e) {
-                TreePath selectedPath = getPathForLocation(e.getX(), e.getY());
-                if (selectedPath != null && e.getClickCount() == 2)
-                    listener.actionPerformed(new ActionEvent(selectedPath.getLastPathComponent(), ActionEvent.ACTION_PERFORMED, "inspect"));
-            }
+    addMouseListener(
+        new MouseAdapter() {
+          public void mouseReleased(MouseEvent e) {
+            TreePath selectedPath = getPathForLocation(e.getX(), e.getY());
+            setSelectionPath(selectedPath);
+            if (e.isPopupTrigger()) popup.show((JComponent) e.getSource(), e.getX(), e.getY());
+          }
+
+          public void mousePressed(MouseEvent e) {
+            TreePath selectedPath = getPathForLocation(e.getX(), e.getY());
+            if (selectedPath != null && e.getClickCount() == 2)
+              listener.actionPerformed(
+                  new ActionEvent(
+                      selectedPath.getLastPathComponent(),
+                      ActionEvent.ACTION_PERFORMED,
+                      "inspect"));
+          }
         });
-    }
+  }
 
-    public void actionPerformed(ActionEvent ae) {
-        TreePath path = this.getSelectionPath();
-        if (path == null) return;
+  public void actionPerformed(ActionEvent ae) {
+    TreePath path = this.getSelectionPath();
+    if (path == null) return;
 
-        listener.actionPerformed(new ActionEvent(path.getLastPathComponent(), ActionEvent.ACTION_PERFORMED, ae.getActionCommand()));
-    }
+    listener.actionPerformed(
+        new ActionEvent(
+            path.getLastPathComponent(), ActionEvent.ACTION_PERFORMED, ae.getActionCommand()));
+  }
 }
