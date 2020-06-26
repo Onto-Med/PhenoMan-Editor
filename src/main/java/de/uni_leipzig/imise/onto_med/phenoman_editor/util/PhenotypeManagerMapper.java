@@ -62,8 +62,6 @@ public class PhenotypeManagerMapper {
 
 		if (EntityType.CATEGORY.equals(data.getType())) {
 			entity = buildCategory(data);
-		} else if (EntityType.ABSTRACT_SINGLE_PHENOTYPE.equals(data.getType())) {
-			entity = buildAbstractSinglePhenotype(data);
 		} else if (data.getType() != null && data.getType().isAbstractPhenotype()) {
 			entity = buildAbstractPhenotype(data);
 		} else if (data.getType() != null && data.getType().isRestrictedPhenotype()) {
