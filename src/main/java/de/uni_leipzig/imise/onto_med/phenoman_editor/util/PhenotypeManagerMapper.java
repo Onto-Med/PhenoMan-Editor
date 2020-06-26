@@ -107,6 +107,12 @@ public class PhenotypeManagerMapper {
 		}
 		entity.setCategories(data.getSuperCategories().toArray(new String[0]));
 
+		if (data.getExclusionCriterion()) {
+			entity.setExclusionCriterion();
+		} else {
+			entity.setInclusionCriterion();
+		}
+
 		return entity;
 	}
 
@@ -162,7 +168,6 @@ public class PhenotypeManagerMapper {
 		 TODO:
 		   * ResourceType resourceType
 		   * TimePeriod validityPeriod
-		   * EligibilityCriterion eligibilityCriterion
 		   * String artDecorDatatype
 		*/
 
@@ -338,7 +343,9 @@ public class PhenotypeManagerMapper {
 			bean = loadAbstractBooleanAttributes(entity.asAbstractBooleanPhenotype());
 		}
 
-		return bean.setSuperCategories(Arrays.asList(entity.getCategories()));
+		return bean
+			.setExclusionCriterion(entity.isExclusionCriterion())
+			.setSuperCategories(Arrays.asList(entity.getCategories()));
 	}
 
 	private @Nonnull PhenotypeBean loadAbstractSingleAttributes(@Nonnull AbstractSinglePhenotype entity) {
@@ -350,7 +357,6 @@ public class PhenotypeManagerMapper {
 		   * Function function
 		   * ResourceType resourceType
 		   * TimePeriod validityPeriod
-		   * EligibilityCriterion eligibilityCriterion
 		   * String artDecorDatatype
 		 */
 	}

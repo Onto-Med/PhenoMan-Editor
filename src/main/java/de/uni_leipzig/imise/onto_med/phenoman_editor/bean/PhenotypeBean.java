@@ -34,6 +34,8 @@ public class PhenotypeBean {
 	private List<String> codes           = new ArrayList<>();
 	private List<String> superCategories = new ArrayList<>();
 
+	private Boolean exclusionCriterion;
+
 	/**
 	 * OWL2Datatype of the {@code AbstractSinglePhenotype} or of the formula of the {@code AbstractCalculationPhenotype}.
 	 */
@@ -143,6 +145,15 @@ public class PhenotypeBean {
 
 	public PhenotypeBean setCodes(List<String> codes) {
 		this.codes = codes;
+		return this;
+	}
+
+	public Boolean getExclusionCriterion() {
+		return exclusionCriterion;
+	}
+
+	public PhenotypeBean setExclusionCriterion(Boolean exclusionCriterion) {
+		this.exclusionCriterion = exclusionCriterion;
 		return this;
 	}
 
