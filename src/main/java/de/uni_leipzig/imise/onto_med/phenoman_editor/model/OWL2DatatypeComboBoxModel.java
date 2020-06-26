@@ -13,7 +13,7 @@ public class OWL2DatatypeComboBoxModel implements ComboBoxModel<OWL2Datatype> {
     private int index = -1;
 
     public OWL2DatatypeComboBoxModel() {
-        datatypes = Arrays.asList(OWL2Datatype.XSD_STRING, OWL2Datatype.XSD_DECIMAL, OWL2Datatype.XSD_DATE_TIME);
+        datatypes = Arrays.asList(OWL2Datatype.XSD_BOOLEAN, OWL2Datatype.XSD_DECIMAL, OWL2Datatype.XSD_DATE_TIME);
         datatypes.sort(Comparator.comparing(OWL2Datatype::getShortForm));
     }
 
