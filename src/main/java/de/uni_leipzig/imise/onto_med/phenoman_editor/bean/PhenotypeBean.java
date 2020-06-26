@@ -1,5 +1,6 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor.bean;
 
+import care.smith.phep.phenoman.core.model.resource_type.ResourceType;
 import de.imise.onto_api.entities.restrictions.data_range.DataRange;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.LocalizedString;
@@ -32,6 +33,7 @@ public class PhenotypeBean {
   private List<String> superCategories = new ArrayList<>();
 
   private Boolean exclusionCriterion;
+  private ResourceType resourceType;
 
   /**
    * OWL2Datatype of the {@code AbstractSinglePhenotype} or of the formula of the {@code
@@ -146,6 +148,15 @@ public class PhenotypeBean {
 
   public PhenotypeBean setExclusionCriterion(Boolean exclusionCriterion) {
     this.exclusionCriterion = exclusionCriterion;
+    return this;
+  }
+
+  public ResourceType getResourceType() {
+    return resourceType;
+  }
+
+  public PhenotypeBean setResourceType(ResourceType resourceType) {
+    this.resourceType = resourceType;
     return this;
   }
 

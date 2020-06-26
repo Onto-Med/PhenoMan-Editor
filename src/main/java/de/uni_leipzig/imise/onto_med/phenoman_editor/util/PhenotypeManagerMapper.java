@@ -97,7 +97,7 @@ public class PhenotypeManagerMapper {
   private @Nonnull AbstractPhenotype buildAbstractPhenotype(@Nonnull PhenotypeBean data)
       throws UnsupportedDataTypeException {
     // TODO: restrictions are lost because they are tied to the AbstractPhenotype and they cannot be
-    // retrived from the PhenotypeManager!
+    // retrieved from the PhenotypeManager!
     AbstractPhenotype entity;
 
     if (EntityType.ABSTRACT_SINGLE_PHENOTYPE.equals(data.getType())) {
@@ -164,12 +164,9 @@ public class PhenotypeManagerMapper {
               data.getDatatype(), AbstractSinglePhenotype.class));
     }
     entity.setUnits(data.getUnits());
-    /*
-     TODO:
-       * ResourceType resourceType
-       * TimePeriod validityPeriod
-       * String artDecorDatatype
-    */
+    entity.setResourceType(data.getResourceType());
+
+    // TODO: TimePeriod validityPeriod
 
     return entity;
   }
@@ -367,13 +364,12 @@ public class PhenotypeManagerMapper {
       @Nonnull AbstractSinglePhenotype entity) {
     return new PhenotypeBean()
         .setUnits(entity.asAbstractSinglePhenotype().getUnits())
-        .setDatatype(entity.getDatatype());
+        .setDatatype(entity.getDatatype())
+        .setResourceType(entity.getResourceType());
     /*
     TODO:
       * Function function
-      * ResourceType resourceType
       * TimePeriod validityPeriod
-      * String artDecorDatatype
     */
   }
 
