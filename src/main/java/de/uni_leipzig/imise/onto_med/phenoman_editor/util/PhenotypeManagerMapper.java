@@ -165,6 +165,7 @@ public class PhenotypeManagerMapper {
     }
     entity.setUnits(data.getUnits());
     entity.setResourceType(data.getResourceType());
+    entity.setFunction(data.getFunction());
 
     // TODO: TimePeriod validityPeriod
 
@@ -365,12 +366,9 @@ public class PhenotypeManagerMapper {
     return new PhenotypeBean()
         .setUnits(entity.asAbstractSinglePhenotype().getUnits())
         .setDatatype(entity.getDatatype())
-        .setResourceType(entity.getResourceType());
-    /*
-    TODO:
-      * Function function
-      * TimePeriod validityPeriod
-    */
+        .setResourceType(entity.getResourceType())
+        .setFunction(entity.getFunction());
+    // TODO: TimePeriod validityPeriod
   }
 
   private @Nonnull PhenotypeBean loadAbstractCalculationAttributes(
