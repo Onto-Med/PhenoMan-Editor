@@ -5,6 +5,7 @@ import care.smith.phep.phenoman.core.man.PhenotypeManager;
 import care.smith.phep.phenoman.core.man.PhenotypeWriter;
 import care.smith.phep.phenoman.core.model.code_system.Code;
 import care.smith.phep.phenoman.core.model.phenotype.*;
+import care.smith.phep.phenoman.core.model.phenotype.enums.EligibilityCriterion;
 import care.smith.phep.phenoman.core.model.phenotype.top_level.*;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.bean.PhenotypeBean;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
@@ -112,7 +113,9 @@ public class PhenotypeManagerMapper {
     }
     entity.setCategories(data.getSuperCategories().toArray(new String[0]));
 
-    if (data.getExclusionCriterion()) {
+    if (data.getExclusionCriterion() == null) {
+      entity.setEligibilityCriterion(EligibilityCriterion.NONE);
+    } else if (data.getExclusionCriterion()) {
       entity.setExclusionCriterion();
     } else {
       entity.setInclusionCriterion();
@@ -166,6 +169,7 @@ public class PhenotypeManagerMapper {
     entity.setUnits(data.getUnits());
     entity.setResourceType(data.getResourceType());
     entity.setFunction(data.getFunction());
+    entity.setInProjection(data.getInProjection() != null && data.getInProjection());
 
     // TODO: TimePeriod validityPeriod
 
@@ -367,7 +371,8 @@ public class PhenotypeManagerMapper {
         .setUnits(entity.asAbstractSinglePhenotype().getUnits())
         .setDatatype(entity.getDatatype())
         .setResourceType(entity.getResourceType())
-        .setFunction(entity.getFunction());
+        .setFunction(entity.getFunction())
+        .setInProjection(entity.isInProjection());
     // TODO: TimePeriod validityPeriod
   }
 

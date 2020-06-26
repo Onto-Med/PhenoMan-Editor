@@ -65,6 +65,8 @@ public class PhenotypeForm extends JPanel {
   private JLabel                  resourceTypeLabel;
   private JComboBox<String>       functionComboBox;
   private JLabel                  functionLabel;
+  private JCheckBox               inProjectionCheckBox;
+  private JLabel                  inProjectionLabel;
   private EntityType              type;
 
   public PhenotypeForm(ActionListener listener) {
@@ -107,10 +109,10 @@ public class PhenotypeForm extends JPanel {
     descriptionsField.setData(data.getDescriptions());
     relationsField.setData(data.getRelations());
     resourceTypeComboBox.setSelectedItem(data.getResourceType() != null ? data.getResourceType().getName() : null);
-    exclusionCriterionCheckBox.setSelected(
-        data.getExclusionCriterion() != null ? data.getExclusionCriterion() : false);
+    exclusionCriterionCheckBox.setSelected(data.getExclusionCriterion() != null && data.getExclusionCriterion());
     functionComboBox.setSelectedItem(data.getFunction() != null ? data.getFunction().getClass().getName() : null);
-    negatedCheckBox.setSelected(data.getNegated() != null ? data.getNegated() : false);
+    negatedCheckBox.setSelected(data.getNegated() != null && data.getNegated());
+    inProjectionCheckBox.setSelected(data.getInProjection() != null && data.getInProjection());
 
     if (data.getSuperCategories() != null)
       superCategoriesField.setText(String.join("; ", data.getSuperCategories()));
@@ -162,6 +164,7 @@ public class PhenotypeForm extends JPanel {
         ResourceTypes.getInstance()
             .getResourceType((String) resourceTypeComboBox.getSelectedItem()));
     data.setFunction(Functions.getInstance().getFunction((String) functionComboBox.getSelectedItem()));
+    data.setInProjection(inProjectionCheckBox.isSelected());
     return data;
   }
 
@@ -199,6 +202,7 @@ public class PhenotypeForm extends JPanel {
     if (exclusionCriterionCheckBox.isSelected() != data.getExclusionCriterion()) return true;
     if (resourceTypeComboBox.getSelectedItem() != data.getResourceType().getName()) return true;
     if (functionComboBox.getSelectedItem() != data.getFunction().getClass().getName()) return true;
+    if (inProjectionCheckBox.isSelected() != data.getInProjection()) return true;
     return false;
   }
 
@@ -227,6 +231,8 @@ public class PhenotypeForm extends JPanel {
         type.equals(EntityType.ABSTRACT_SINGLE_PHENOTYPE),
         functionComboBox,
         functionLabel,
+        inProjectionCheckBox,
+        inProjectionLabel,
         resourceTypeComboBox,
         resourceTypeLabel,
         unitsField,
@@ -268,7 +274,7 @@ public class PhenotypeForm extends JPanel {
   private void $$$setupUI$$$() {
     createUIComponents();
     contentPane = new JPanel();
-    contentPane.setLayout(new GridLayoutManager(20, 4, new Insets(5, 5, 5, 5), -1, -1));
+    contentPane.setLayout(new GridLayoutManager(21, 4, new Insets(5, 5, 5, 5), -1, -1));
     final JLabel label1 = new JLabel();
     label1.setText("ID:*");
     contentPane.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -279,7 +285,7 @@ public class PhenotypeForm extends JPanel {
     contentPane.add(label2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     saveButton = new JButton();
     saveButton.setText("Save");
-    contentPane.add(saveButton, new GridConstraints(18, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    contentPane.add(saveButton, new GridConstraints(19, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     mainTitleField = new JTextField();
     contentPane.add(mainTitleField, new GridConstraints(1, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     superPhenotypeLabel = new JLabel();
@@ -290,7 +296,7 @@ public class PhenotypeForm extends JPanel {
     contentPane.add(superPhenotypeField, new GridConstraints(3, 1, 1, 2, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     formulaLabel = new JLabel();
     formulaLabel.setText("Formula:*");
-    contentPane.add(formulaLabel, new GridConstraints(12, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    contentPane.add(formulaLabel, new GridConstraints(13, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     superCategoriesLabel = new JLabel();
     superCategoriesLabel.setText("Super categories:");
     contentPane.add(superCategoriesLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -300,37 +306,37 @@ public class PhenotypeForm extends JPanel {
     contentPane.add(superCategoriesField, new GridConstraints(2, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     datatypeLabel = new JLabel();
     datatypeLabel.setText("Datatype:*");
-    contentPane.add(datatypeLabel, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-    contentPane.add(datatypeField, new GridConstraints(11, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    contentPane.add(datatypeLabel, new GridConstraints(12, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    contentPane.add(datatypeField, new GridConstraints(12, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     rangeLabel = new JLabel();
     rangeLabel.setText("Restriction:*");
-    contentPane.add(rangeLabel, new GridConstraints(13, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    contentPane.add(rangeLabel, new GridConstraints(14, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final Spacer spacer1 = new Spacer();
     contentPane.add(spacer1, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     final Spacer spacer2 = new Spacer();
-    contentPane.add(spacer2, new GridConstraints(19, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+    contentPane.add(spacer2, new GridConstraints(20, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     final JSeparator separator1 = new JSeparator();
-    contentPane.add(separator1, new GridConstraints(10, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    contentPane.add(separator1, new GridConstraints(11, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     rangeField = new DataRangeField();
-    contentPane.add(rangeField.$$$getRootComponent$$$(), new GridConstraints(13, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+    contentPane.add(rangeField.$$$getRootComponent$$$(), new GridConstraints(14, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     negatedLabel = new JLabel();
     negatedLabel.setText("Negated:");
-    contentPane.add(negatedLabel, new GridConstraints(14, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    contentPane.add(negatedLabel, new GridConstraints(15, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     negatedCheckBox = new JCheckBox();
     negatedCheckBox.setText("check this box to negate the restriction above");
-    contentPane.add(negatedCheckBox, new GridConstraints(14, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    contentPane.add(negatedCheckBox, new GridConstraints(15, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     scoreLabel = new JLabel();
     scoreLabel.setText("Score:");
-    contentPane.add(scoreLabel, new GridConstraints(16, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    contentPane.add(scoreLabel, new GridConstraints(17, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     scoreField = new JFormattedTextField();
-    contentPane.add(scoreField, new GridConstraints(16, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+    contentPane.add(scoreField, new GridConstraints(17, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     ucumLabel = new JLabel();
     ucumLabel.setText("Units:");
-    contentPane.add(ucumLabel, new GridConstraints(15, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    contentPane.add(ucumLabel, new GridConstraints(16, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     unitsField = new JTextField();
-    contentPane.add(unitsField, new GridConstraints(15, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+    contentPane.add(unitsField, new GridConstraints(16, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     metadataCollapsiblePane.setLayout(new GridLayoutManager(4, 2, new Insets(0, 0, 0, 0), -1, -1));
-    contentPane.add(metadataCollapsiblePane, new GridConstraints(9, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+    contentPane.add(metadataCollapsiblePane, new GridConstraints(10, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     final JLabel label3 = new JLabel();
     label3.setText("Titles:");
     metadataCollapsiblePane.add(label3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(98, 16), null, 0, false));
@@ -357,19 +363,19 @@ public class PhenotypeForm extends JPanel {
     codesField = new StringField();
     contentPane.add(codesField.$$$getRootComponent$$$(), new GridConstraints(4, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     showAdditionalMetadataButton.setText("Show additional metadata");
-    contentPane.add(showAdditionalMetadataButton, new GridConstraints(8, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    contentPane.add(showAdditionalMetadataButton, new GridConstraints(9, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final JLabel label7 = new JLabel();
     label7.setEnabled(false);
     label7.setText("* Required fields");
-    contentPane.add(label7, new GridConstraints(18, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    contentPane.add(label7, new GridConstraints(19, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     formulaScrollPane = new JScrollPane();
-    contentPane.add(formulaScrollPane, new GridConstraints(12, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+    contentPane.add(formulaScrollPane, new GridConstraints(13, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     formulaField = new JTextArea();
     formulaField.setLineWrap(true);
     formulaField.setWrapStyleWord(true);
     formulaScrollPane.setViewportView(formulaField);
     final JSeparator separator2 = new JSeparator();
-    contentPane.add(separator2, new GridConstraints(17, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    contentPane.add(separator2, new GridConstraints(18, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     exclusionCriterionLabel = new JLabel();
     exclusionCriterionLabel.setText("Exclusion:");
     contentPane.add(exclusionCriterionLabel, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -383,7 +389,14 @@ public class PhenotypeForm extends JPanel {
     functionLabel = new JLabel();
     functionLabel.setText("Function:");
     contentPane.add(functionLabel, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    functionComboBox.setToolTipText("If there are multiple values, this function will be applied on them in calculations.");
     contentPane.add(functionComboBox, new GridConstraints(6, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    inProjectionLabel = new JLabel();
+    inProjectionLabel.setText("Add to projection:");
+    contentPane.add(inProjectionLabel, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    inProjectionCheckBox = new JCheckBox();
+    inProjectionCheckBox.setText("check this box to include the phenotype in result sets");
+    contentPane.add(inProjectionCheckBox, new GridConstraints(8, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     label1.setLabelFor(idField);
     label2.setLabelFor(mainTitleField);
     formulaLabel.setLabelFor(formulaField);

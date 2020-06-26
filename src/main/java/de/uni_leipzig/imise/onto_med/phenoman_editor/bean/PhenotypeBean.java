@@ -36,6 +36,7 @@ public class PhenotypeBean {
   private Boolean exclusionCriterion;
   private ResourceType resourceType;
   private Function function;
+  private Boolean inProjection;
 
   /**
    * OWL2Datatype of the {@code AbstractSinglePhenotype} or of the formula of the {@code
@@ -168,6 +169,15 @@ public class PhenotypeBean {
 
   public PhenotypeBean setFunction(Function function) {
     this.function = function;
+    return this;
+  }
+
+  public Boolean getInProjection() {
+    return inProjection;
+  }
+
+  public PhenotypeBean setInProjection(Boolean inProjection) {
+    this.inProjection = inProjection;
     return this;
   }
 
