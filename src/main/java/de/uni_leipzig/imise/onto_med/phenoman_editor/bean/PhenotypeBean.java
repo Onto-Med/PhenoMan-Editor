@@ -1,6 +1,7 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor.bean;
 
 import care.smith.phep.phenoman.core.model.function.Function;
+import care.smith.phep.phenoman.core.model.phenotype.top_level.TimePeriod;
 import care.smith.phep.phenoman.core.model.resource_type.ResourceType;
 import de.imise.onto_api.entities.restrictions.data_range.DataRange;
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.EntityType;
@@ -35,24 +36,24 @@ public class PhenotypeBean {
 
   private Boolean exclusionCriterion;
 
-  /**
-   * A FHIR resource type, this phenotype is stored as.
-   */
+  /** A FHIR resource type, this phenotype is stored as. */
   private ResourceType resourceType;
 
   /**
-   * If there are multiple values present for a phenotype, {@code function} determines which of those values
-   * should be used for calculations, etc.
-   * See {@link care.smith.phep.phenoman.core.model.function.Functions} for supported functions.
+   * If there are multiple values present for a phenotype, {@code function} determines which of
+   * those values should be used for calculations, etc. See {@link
+   * care.smith.phep.phenoman.core.model.function.Functions} for supported functions.
    */
   private Function function;
 
   /**
-   * If true, the phenotype is included in the property list of a FHIR query result set
-   * and it's values can be accessed.
+   * If true, the phenotype is included in the property list of a FHIR query result set and it's
+   * values can be accessed.
    */
   private Boolean inProjection;
 
+  /** The time period in which this phenotype is valid. (e.g., within the last month) */
+  private TimePeriod validityPeriod;
 
   /**
    * OWL2Datatype of the {@code AbstractSinglePhenotype} or of the formula of the {@code
@@ -194,6 +195,15 @@ public class PhenotypeBean {
 
   public PhenotypeBean setInProjection(Boolean inProjection) {
     this.inProjection = inProjection;
+    return this;
+  }
+
+  public TimePeriod getValidityPeriod() {
+    return validityPeriod;
+  }
+
+  public PhenotypeBean setValidityPeriod(TimePeriod validityPeriod) {
+    this.validityPeriod = validityPeriod;
     return this;
   }
 

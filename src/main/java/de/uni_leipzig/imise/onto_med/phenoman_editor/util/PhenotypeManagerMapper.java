@@ -170,8 +170,8 @@ public class PhenotypeManagerMapper {
     entity.setResourceType(data.getResourceType());
     entity.setFunction(data.getFunction());
     entity.setInProjection(data.getInProjection() != null && data.getInProjection());
-
-    // TODO: TimePeriod validityPeriod
+    TimePeriod timePeriod = data.getValidityPeriod();
+    if (timePeriod != null) entity.setValidityPeriod(timePeriod.getValue(), timePeriod.getUnit());
 
     return entity;
   }
@@ -373,8 +373,8 @@ public class PhenotypeManagerMapper {
         .setDatatype(entity.getDatatype())
         .setResourceType(entity.getResourceType())
         .setFunction(entity.getFunction())
-        .setInProjection(entity.isInProjection());
-    // TODO: TimePeriod validityPeriod
+        .setInProjection(entity.isInProjection())
+        .setValidityPeriod(entity.getValidityPeriod());
   }
 
   private @Nonnull PhenotypeBean loadAbstractCalculationAttributes(
