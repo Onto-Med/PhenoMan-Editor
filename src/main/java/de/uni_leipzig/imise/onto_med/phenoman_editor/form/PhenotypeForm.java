@@ -231,8 +231,6 @@ public class PhenotypeForm extends JPanel {
         type.equals(EntityType.ABSTRACT_SINGLE_PHENOTYPE),
         functionComboBox,
         functionLabel,
-        inProjectionCheckBox,
-        inProjectionLabel,
         resourceTypeComboBox,
         resourceTypeLabel,
         unitsField,
@@ -242,6 +240,12 @@ public class PhenotypeForm extends JPanel {
     toggleFields(type.hasRestriction(), rangeField, rangeLabel);
     toggleFields(type.hasFormula(), formulaField, formulaLabel, formulaScrollPane);
     toggleFields(!type.equals(EntityType.CATEGORY), codesField, codesLabel);
+    toggleFields(
+        type.equals(EntityType.ABSTRACT_SINGLE_PHENOTYPE)
+            || type.equals(EntityType.ABSTRACT_CALCULATION_PHENOTYPE),
+        inProjectionCheckBox,
+        inProjectionLabel
+    );
 
 
     metadataCollapsiblePane.setCollapsed(true);

@@ -208,6 +208,7 @@ public class PhenotypeManagerMapper {
               data.getDatatype(), AbstractCalculationPhenotype.class));
     }
     entity.setMainResult(data.getMainResult());
+    entity.setInProjection(data.getInProjection() != null && data.getInProjection());
     // TODO: BigDecimal value
 
     return entity;
@@ -382,7 +383,8 @@ public class PhenotypeManagerMapper {
         .setUnits(entity.asAbstractCalculationPhenotype().getUnits())
         .setDatatype(entity.getDatatype())
         .setFormula(entity.getFormula())
-        .setMainResult(entity.isMainResult());
+        .setMainResult(entity.isMainResult())
+        .setInProjection(entity.isInProjection());
     // TODO: BigDecimal value
   }
 
