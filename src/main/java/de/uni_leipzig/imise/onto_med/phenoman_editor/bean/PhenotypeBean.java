@@ -34,9 +34,25 @@ public class PhenotypeBean {
   private List<String> superCategories = new ArrayList<>();
 
   private Boolean exclusionCriterion;
+
+  /**
+   * A FHIR resource type, this phenotype is stored as.
+   */
   private ResourceType resourceType;
+
+  /**
+   * If there are multiple values present for a phenotype, {@code function} determines which of those values
+   * should be used for calculations, etc.
+   * See {@link care.smith.phep.phenoman.core.model.function.Functions} for supported functions.
+   */
   private Function function;
+
+  /**
+   * If true, the phenotype is included in the property list of a FHIR query result set
+   * and it's values can be accessed.
+   */
   private Boolean inProjection;
+
 
   /**
    * OWL2Datatype of the {@code AbstractSinglePhenotype} or of the formula of the {@code
