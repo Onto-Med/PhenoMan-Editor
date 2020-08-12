@@ -1,12 +1,12 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor.util;
 
-import de.uni_leipzig.imise.onto_med.phenoman_editor.bean.PhenotypeBean;
-import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import care.smith.phep.phenoman.core.exception.WrongPhenotypeTypeException;
 import care.smith.phep.phenoman.core.man.PhenotypeManager;
 import care.smith.phep.phenoman.core.model.code_system.Code;
 import care.smith.phep.phenoman.core.model.phenotype.*;
 import care.smith.phep.phenoman.core.model.phenotype.top_level.*;
+import de.uni_leipzig.imise.onto_med.phenoman_editor.bean.PhenotypeBean;
+import org.semanticweb.owlapi.vocab.OWL2Datatype;
 
 import javax.activation.UnsupportedDataTypeException;
 import javax.annotation.Nonnull;
@@ -37,22 +37,22 @@ public class PhenotypeManagerMapper {
 		@Nonnull Entity entity
 	) throws WrongPhenotypeTypeException {
 		if (entity.isCategory()) {
-			model.addCategory(entity.asCategory());
+			model.getWriter().addCategory(entity.asCategory());
 		} else if (entity.isAbstractSinglePhenotype()) {
-			model.addAbstractSinglePhenotype(entity.asAbstractSinglePhenotype());
+			model.getWriter().addAbstractSinglePhenotype(entity.asAbstractSinglePhenotype());
 		} else if (entity.isAbstractCalculationPhenotype()) {
-			model.addAbstractCalculationPhenotype(entity.asAbstractCalculationPhenotype());
+			model.getWriter().addAbstractCalculationPhenotype(entity.asAbstractCalculationPhenotype());
 		} else if (entity.isAbstractBooleanPhenotype()) {
-			model.addAbstractBooleanPhenotype(entity.asAbstractBooleanPhenotype());
+			model.getWriter().addAbstractBooleanPhenotype(entity.asAbstractBooleanPhenotype());
 		} else if (entity.isRestrictedSinglePhenotype()) {
-			model.addRestrictedSinglePhenotype(entity.asRestrictedSinglePhenotype());
+			model.getWriter().addRestrictedSinglePhenotype(entity.asRestrictedSinglePhenotype());
 		} else if (entity.isRestrictedCalculationPhenotype()) {
-			model.addRestrictedCalculationPhenotype(entity.asRestrictedCalculationPhenotype());
+			model.getWriter().addRestrictedCalculationPhenotype(entity.asRestrictedCalculationPhenotype());
 		} else if (entity.isRestrictedBooleanPhenotype()) {
-			model.addRestrictedBooleanPhenotype(entity.asRestrictedBooleanPhenotype());
+			model.getWriter().addRestrictedBooleanPhenotype(entity.asRestrictedBooleanPhenotype());
 		}
 
-		model.write();
+		model.getWriter().write();
 	}
 
 	public @Nonnull Entity buildEntity(@Nonnull PhenotypeBean data) throws UnsupportedDataTypeException {
@@ -217,7 +217,7 @@ public class PhenotypeManagerMapper {
 	}
 
 	private @Nonnull RestrictedSinglePhenotype buildRestrictedSinglePhenotype(@Nonnull PhenotypeBean data) throws UnsupportedDataTypeException {
-		AbstractSinglePhenotype parent = model.getAbstractSinglePhenotype(data.getSuperPhenotype());
+		AbstractSinglePhenotype parent = model.getReader().getAbstractSinglePhenotype(data.getSuperPhenotype());
 		RestrictedSinglePhenotype entity;
 
 		if (parent.hasBooleanDatatype()) {
@@ -252,7 +252,7 @@ public class PhenotypeManagerMapper {
 	}
 
 	private @Nonnull RestrictedCalculationPhenotype buildRestrictedCalculationPhenotype(@Nonnull PhenotypeBean data) throws UnsupportedDataTypeException {
-		AbstractCalculationPhenotype parent = model.getAbstractCalculationPhenotype(data.getSuperPhenotype());
+		AbstractCalculationPhenotype parent = model.getReader().getAbstractCalculationPhenotype(data.getSuperPhenotype());
 		RestrictedCalculationPhenotype entity;
 
 		if (parent.hasBooleanDatatype()) {
@@ -287,7 +287,7 @@ public class PhenotypeManagerMapper {
 	}
 
 	private @Nonnull RestrictedBooleanPhenotype buildRestrictedBooleanPhenotype(@Nonnull PhenotypeBean data) {
-		AbstractBooleanPhenotype parent = model.getAbstractBooleanPhenotype(data.getSuperPhenotype());
+		AbstractBooleanPhenotype parent = model.getReader().getAbstractBooleanPhenotype(data.getSuperPhenotype());
 
 		RestrictedBooleanPhenotype entity = parent.createRestrictedPhenotype(
 			data.getId(),

@@ -1,5 +1,8 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor;
 
+import care.smith.phep.phenoman.core.man.PhenotypeManager;
+import care.smith.phep.phenoman.core.model.category_tree.EntityTreeNode;
+import care.smith.phep.phenoman.core.model.phenotype.top_level.Entity;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -10,9 +13,6 @@ import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeManagerMapper
 import de.uni_leipzig.imise.onto_med.phenoman_editor.util.PhenotypeTree;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import care.smith.phep.phenoman.core.man.PhenotypeManager;
-import care.smith.phep.phenoman.core.model.category_tree.EntityTreeNode;
-import care.smith.phep.phenoman.core.model.phenotype.top_level.Entity;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -191,7 +191,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
 
     private void reloadEntityTree() {
         if (mapper == null || !mapper.hasModel()) return;
-        EntityTreeNode node = mapper.getModel().getEntityTreeWithPhenotypes(false);
+        EntityTreeNode node = mapper.getModel().getReader().getEntityTreeWithPhenotypes(false);
         tree.setModel(new DefaultTreeModel(convertToTreeNode(node)));
     }
 
@@ -248,8 +248,8 @@ public class PhenoManEditor extends JFrame implements ActionListener {
             case "delete":
                 if (entity == null) return;
                 PhenotypeManager model = mapper.getModel();
-                model.removeEntities(entity.getName());
-                model.write();
+                model.getCleaner().removeEntities(entity.getName());
+                model.getWriter().write();
                 reloadEntityTree();
             case "phenotype_saved":
                 reloadEntityTree();
