@@ -254,6 +254,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
                 if (dataSetId == null || dataSetId.length() == 0) return;
                 try {
                     mapper.getModel().addArtDecorDataSet(dataSetId, "en");
+                    mapper.getModel().getWriter().write();
                     reloadEntityTree();
                 } catch (IOException | WrongPhenotypeTypeException | URISyntaxException | JAXBException e) {
                     e.printStackTrace();
