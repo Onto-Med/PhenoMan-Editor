@@ -1,8 +1,8 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor.util;
 
+import care.smith.phep.phenoman.core.model.phenotype.top_level.Entity;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
-import care.smith.phep.phenoman.core.model.phenotype.top_level.Entity;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -72,6 +72,8 @@ public class PhenotypeTreePopup extends JPopupMenu {
     @Override
     public void show(Component c, int x, int y) {
         DefaultMutableTreeNode node = ((DefaultMutableTreeNode) ((PhenotypeTree) c).getLastSelectedPathComponent());
+        if (node == null) return;
+
         Entity entity = (Entity) node.getUserObject();
 
         setInspectVisible(entity != null);
