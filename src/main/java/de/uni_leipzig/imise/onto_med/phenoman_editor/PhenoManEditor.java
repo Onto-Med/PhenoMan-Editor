@@ -1,6 +1,7 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor;
 
 import care.smith.phep.phenoman.core.exception.WrongPhenotypeTypeException;
+import care.smith.phep.phenoman.core.man.PhenoManSettings;
 import care.smith.phep.phenoman.core.man.PhenotypeManager;
 import care.smith.phep.phenoman.core.model.category_tree.EntityTreeNode;
 import care.smith.phep.phenoman.core.model.phenotype.top_level.Entity;
@@ -47,9 +48,11 @@ public class PhenoManEditor extends JFrame implements ActionListener {
     private PhenotypeManagerMapper mapper;
 
     @SuppressWarnings("unused")
-    private JLabel copImage;
+    private JLabel     copImage;
     @SuppressWarnings("unused")
-    private JLabel exampleImage;
+    private JLabel     exampleImage;
+    private JTextField artDecorUrlField;
+    private JButton    saveButton;
 
     public PhenoManEditor() {
         $$$setupUI$$$();
@@ -60,17 +63,17 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         copImage.setIcon(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/COP.png"))));
         exampleImage.setIcon(new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/Example_BSA.png"))));
 
-		add(contentPane);
-		setTitle("PhenoMan-Editor");
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setSize(1000, 700);
-		setLocationRelativeTo(null);
+        add(contentPane);
+        setTitle("PhenoMan-Editor");
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setSize(1000, 700);
+        setLocationRelativeTo(null);
         tabbedPane.setIconAt(0, IconFontSwing.buildIcon(FontAwesome.INFO, 12));
         tabbedPane.setIconAt(1, IconFontSwing.buildIcon(FontAwesome.SITEMAP, 12));
         tabbedPane.setIconAt(2, IconFontSwing.buildIcon(FontAwesome.PENCIL_SQUARE_O, 12));
         tabbedPane.setIconAt(3, IconFontSwing.buildIcon(FontAwesome.BOLT, 12));
         tabbedPane.setIconAt(4, IconFontSwing.buildIcon(FontAwesome.COGS, 12));
-		tabbedPane.setEnabledAt(2, false);
+        tabbedPane.setEnabledAt(2, false);
         tabbedPane.setEnabledAt(3, false);
         phenotypeForm.setVisible(false);
         phenotypeFormScrollPane.getVerticalScrollBar().setUnitIncrement(10);
@@ -82,14 +85,14 @@ public class PhenoManEditor extends JFrame implements ActionListener {
             if (fileChooser.showOpenDialog(new JFrame()) != JFileChooser.APPROVE_OPTION) return;
 
             File file = fileChooser.getSelectedFile();
-			ontologyPath.setText(file.getAbsolutePath());
-		});
+            ontologyPath.setText(file.getAbsolutePath());
+        });
 
-		loadOntologyButton.addActionListener(actionEvent -> {
-			String path = ontologyPath.getText();
-			if (path.isEmpty()) return;
+        loadOntologyButton.addActionListener(actionEvent -> {
+            String path = ontologyPath.getText();
+            if (path.isEmpty()) return;
 
-			doInBackground("Loading ontology...", () -> {
+            doInBackground("Loading ontology...", () -> {
                 mapper.setModel(null);
                 setTitle("PhenoMan-Editor");
                 try {
@@ -108,9 +111,9 @@ public class PhenoManEditor extends JFrame implements ActionListener {
                 tabbedPane.setSelectedIndex(2);
                 reloadEntityTree();
                 return null;
-			});
-		});
-		reloadButton.setIcon(IconFontSwing.buildIcon(FontAwesome.REFRESH, 12));
+            });
+        });
+        reloadButton.setIcon(IconFontSwing.buildIcon(FontAwesome.REFRESH, 12));
         reloadButton.addActionListener(actionEvent -> reloadEntityTree());
         treeSearchField.addKeyListener(new KeyAdapter() {
             @Override
@@ -135,6 +138,14 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         });
 
         mapper = new PhenotypeManagerMapper();
+        saveButton.addActionListener(e -> {
+            String artDecorUrl = artDecorUrlField.getText();
+            if (artDecorUrl != null && artDecorUrl.length() > 0) {
+                PhenoManSettings.ART_DECOR_SERVER_URL = artDecorUrl;
+            } else {
+                artDecorUrlField.setText(PhenoManSettings.ART_DECOR_SERVER_URL);
+            }
+        });
     }
 
     private MutableTreeNode convertToTreeNode(EntityTreeNode entityNode) {
@@ -191,6 +202,7 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         tree.setModel(new DefaultTreeModel(null));
         tree.setShowsRootHandles(true);
         phenotypeForm = new PhenotypeForm(this);
+        artDecorUrlField = new JTextField(PhenoManSettings.ART_DECOR_SERVER_URL);
     }
 
     private void reloadEntityTree() {
@@ -369,8 +381,17 @@ public class PhenoManEditor extends JFrame implements ActionListener {
         panel7.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane.addTab("Execute query", panel7);
         final JPanel panel8 = new JPanel();
-        panel8.setLayout(new GridLayoutManager(1, 1, new Insets(5, 5, 5, 5), -1, -1));
+        panel8.setLayout(new GridLayoutManager(3, 2, new Insets(5, 5, 5, 5), -1, -1));
         tabbedPane.addTab("Settings", panel8);
+        final JLabel label5 = new JLabel();
+        label5.setText("ART DECOR Service URL:");
+        panel8.add(label5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer6 = new Spacer();
+        panel8.add(spacer6, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panel8.add(artDecorUrlField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        saveButton = new JButton();
+        saveButton.setText("Save");
+        panel8.add(saveButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
