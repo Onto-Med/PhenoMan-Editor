@@ -1,5 +1,6 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor;
 
+import care.smith.phep.phenoman.core.exception.WrongPhenotypeTypeException;
 import care.smith.phep.phenoman.core.man.PhenotypeManager;
 import care.smith.phep.phenoman.core.model.category_tree.EntityTreeNode;
 import care.smith.phep.phenoman.core.model.phenotype.top_level.Entity;
@@ -17,12 +18,15 @@ import jiconfont.swing.IconFontSwing;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.*;
+import javax.xml.bind.JAXBException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Objects;
@@ -245,6 +249,16 @@ public class PhenoManEditor extends JFrame implements ActionListener {
                 }
                 phenotype.setSuperPhenotype(entity.getName());
                 break;
+            case "import_from_art_decor":
+                String dataSetId = JOptionPane.showInputDialog("Please input an ART DECOR data set ID: ");
+                if (dataSetId == null || dataSetId.length() == 0) return;
+                try {
+                    mapper.getModel().addArtDecorDataSet(dataSetId, "en");
+                    reloadEntityTree();
+                } catch (IOException | WrongPhenotypeTypeException | URISyntaxException | JAXBException e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Data set with ID " + dataSetId + " could not be imported from ART DECOR!");
+                }
             case "delete":
                 if (entity == null) return;
                 PhenotypeManager model = mapper.getModel();

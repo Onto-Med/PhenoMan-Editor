@@ -19,6 +19,7 @@ public class PhenotypeTreePopup extends JPopupMenu {
     private final JMenuItem addAbstractCalculationPhenotypeItem;
     private final JMenuItem addAbstractBooleanPhenotypeItem;
     private final JMenuItem addRestrictedPhenotypeItem;
+    private final JMenuItem importFromArtDecorItem;
     private final JSeparator deleteSeparator;
     private final JMenuItem deleteItem;
 
@@ -52,6 +53,10 @@ public class PhenotypeTreePopup extends JPopupMenu {
         addRestrictedPhenotypeItem.setActionCommand("add_restricted_phenotype");
         addRestrictedPhenotypeItem.addActionListener(listener);
 
+        importFromArtDecorItem = new JMenuItem("Import from ART DECOR", IconFontSwing.buildIcon(FontAwesome.DOWNLOAD, 12));
+        importFromArtDecorItem.setActionCommand("import_from_art_decor");
+        importFromArtDecorItem.addActionListener(listener);
+
         deleteSeparator = new JSeparator();
 
         deleteItem = new JMenuItem("Delete", IconFontSwing.buildIcon(FontAwesome.TRASH_O, 12, new Color(220, 53, 69)));
@@ -65,6 +70,7 @@ public class PhenotypeTreePopup extends JPopupMenu {
         add(addAbstractCalculationPhenotypeItem);
         add(addAbstractBooleanPhenotypeItem);
         add(addRestrictedPhenotypeItem);
+        add(importFromArtDecorItem);
         add(deleteSeparator);
         add(deleteItem);
     }
@@ -80,6 +86,7 @@ public class PhenotypeTreePopup extends JPopupMenu {
         addCategoryItem.setVisible(entity == null || entity.isCategory());
         setAbstractVisible(entity == null || entity.isCategory());
         addRestrictedPhenotypeItem.setVisible(entity != null && entity.isAbstractPhenotype());
+        importFromArtDecorItem.setVisible(entity == null);
         setDeleteVisible(entity != null);
 
         super.show(c, x, y);
