@@ -1,10 +1,7 @@
 package de.uni_leipzig.imise.onto_med.phenoman_editor;
 
-import care.smith.phep.phenoman.core.exception.WrongPhenotypeTypeException;
 import care.smith.phep.phenoman.core.man.PhenoManSettings;
 import care.smith.phep.phenoman.core.man.PhenotypeManager;
-import care.smith.phep.phenoman.core.model.category_tree.EntityTreeNode;
-import care.smith.phep.phenoman.core.model.phenotype.top_level.Entity;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -16,14 +13,8 @@ import jiconfont.swing.IconFontSwing;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.tree.*;
-import javax.xml.bind.JAXBException;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
@@ -35,17 +26,12 @@ public class PhenoManEditor extends JFrame {
   private JButton                loadOntologyButton;
   private JScrollPane            introductionScrollPane;
   private PhenotypeManagerMapper mapper;
-
-  @SuppressWarnings("unused")
-  private JLabel copImage;
-
-  @SuppressWarnings("unused")
-  private JLabel exampleImage;
-  private JTextField artDecorUrlField;
-  private JButton    saveButton;
-
-  private EditorForm editorTab;
-  private QueryForm  queryTab;
+  private JLabel                 copImage;
+  private JLabel                 exampleImage;
+  private JTextField             artDecorUrlField;
+  private JButton                saveButton;
+  private EditorForm             editorTab;
+  private QueryForm              queryTab;
 
   public PhenoManEditor() {
     $$$setupUI$$$();
@@ -259,8 +245,17 @@ public class PhenoManEditor extends JFrame {
     queryTab = new QueryForm();
     panel5.add(queryTab.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     final JPanel panel6 = new JPanel();
-    panel6.setLayout(new GridLayoutManager(1, 1, new Insets(5, 5, 5, 5), -1, -1));
+    panel6.setLayout(new GridLayoutManager(3, 2, new Insets(5, 5, 5, 5), -1, -1));
     tabbedPane.addTab("Settings", panel6);
+    final JLabel label5 = new JLabel();
+    label5.setText("ART DECOR Service URL:");
+    panel6.add(label5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    final Spacer spacer6 = new Spacer();
+    panel6.add(spacer6, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+    panel6.add(artDecorUrlField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+    saveButton = new JButton();
+    saveButton.setText("Save");
+    panel6.add(saveButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
   }
 
   /**
@@ -288,5 +283,4 @@ public class PhenoManEditor extends JFrame {
   public JComponent $$$getRootComponent$$$() {
     return contentPane;
   }
-
 }
