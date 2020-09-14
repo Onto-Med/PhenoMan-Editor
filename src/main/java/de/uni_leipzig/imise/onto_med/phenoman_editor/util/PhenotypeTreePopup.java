@@ -18,6 +18,7 @@ public class PhenotypeTreePopup extends JPopupMenu {
   private final JMenuItem addAbstractCalculationPhenotypeItem;
   private final JMenuItem addAbstractBooleanPhenotypeItem;
   private final JMenuItem addRestrictedPhenotypeItem;
+  private final JMenuItem importFromArtDecorItem;
   private final JSeparator deleteSeparator;
   private final JMenuItem deleteItem;
 
@@ -67,6 +68,10 @@ public class PhenotypeTreePopup extends JPopupMenu {
 
     deleteSeparator = new JSeparator();
 
+    importFromArtDecorItem = new JMenuItem("Import from ART DECOR", IconFontSwing.buildIcon(FontAwesome.DOWNLOAD, 12));
+    importFromArtDecorItem.setActionCommand("import_from_art_decor");
+    importFromArtDecorItem.addActionListener(listener);
+
     deleteItem =
         new JMenuItem(
             "Delete", IconFontSwing.buildIcon(FontAwesome.TRASH_O, 12, new Color(220, 53, 69)));
@@ -81,6 +86,7 @@ public class PhenotypeTreePopup extends JPopupMenu {
     add(addAbstractBooleanPhenotypeItem);
     add(addRestrictedPhenotypeItem);
     add(deleteSeparator);
+    add(importFromArtDecorItem);
     add(deleteItem);
   }
 
@@ -88,13 +94,16 @@ public class PhenotypeTreePopup extends JPopupMenu {
   public void show(Component c, int x, int y) {
     DefaultMutableTreeNode node =
         ((DefaultMutableTreeNode) ((PhenotypeTree) c).getLastSelectedPathComponent());
+    if (node == null) return;
+
     Entity entity = (Entity) node.getUserObject();
 
     setInspectVisible(entity != null);
     addCategoryItem.setVisible(entity == null || entity.isCategory());
     setAbstractVisible(entity == null || entity.isCategory());
     addRestrictedPhenotypeItem.setVisible(entity != null && entity.isAbstractPhenotype());
-    setDeleteVisible(entity != null);
+    importFromArtDecorItem.setVisible(entity == null);
+    deleteItem.setVisible(entity != null);
 
     super.show(c, x, y);
   }
@@ -102,11 +111,6 @@ public class PhenotypeTreePopup extends JPopupMenu {
   private void setInspectVisible(boolean visible) {
     inspectItem.setVisible(visible);
     inspectSeparator.setVisible(visible);
-  }
-
-  private void setDeleteVisible(boolean visible) {
-    deleteItem.setVisible(visible);
-    deleteSeparator.setVisible(visible);
   }
 
   private void setAbstractVisible(boolean visible) {
